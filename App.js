@@ -1,22 +1,36 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Header from './src/components/header';
+import { Provider as PaperProvider } from 'react-native-paper';
+import Home from './src/components/Home';
+import Schedule from './src/components/Schedule';
+import Films from './src/components/Films';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { createAppContainer } from "react-navigation";
+
+const AppNavigator = createMaterialBottomTabNavigator(
+    {
+      Home: {
+        screen: Home,
+      },
+      Schedule: {
+        screen: Schedule
+      },
+      Films: {
+        screen: Films
+      }
+    }, {
+      initialRouteName: 'Home',
+      activeColor: '#f0edf6',
+      barStyle: { backgroundColor: '#ee5956' }
+});
+
+const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
   render() {
     return (
-      <View>
-        <Header header={'Films'}/>
-      </View>
+        <PaperProvider>
+          <AppContainer />
+        </PaperProvider>
     );
   }
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
