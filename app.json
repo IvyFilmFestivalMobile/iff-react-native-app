@@ -9,7 +9,7 @@
       "android"
     ],
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/iff-logo.png",
     "splash": {
       "image": "./assets/splash.png",
