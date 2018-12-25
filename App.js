@@ -1,10 +1,10 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import {Provider as PaperProvider} from 'react-native-paper';
 import Home from './src/components/Home';
-import Schedule from './src/components/Schedule';
+import Schedule from './src/components/schedule/Schedule';
 import Films from './src/components/Films';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import { createAppContainer } from "react-navigation";
+import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
+import {createAppContainer} from "react-navigation";
 
 const AppNavigator = createMaterialBottomTabNavigator(
     {
