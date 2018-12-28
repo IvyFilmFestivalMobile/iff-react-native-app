@@ -18,11 +18,20 @@ const ScheduleNavigator = createStackNavigator(
         }
     }, {
         initialRouteName: 'Schedule',
-        navigationOptions: {
-            tabBarIcon: FATabBarIcon('calendar'),
-        }
     }
 );
+
+ScheduleNavigator.navigationOptions = ({navigation}) => {
+    let tabBarVisible = true;
+    if (navigation.state.index > 0) {
+        tabBarVisible = false;
+    }
+
+    return {
+        tabBarIcon: FATabBarIcon('calendar'),
+        tabBarVisible,
+    };
+};
 
 const AppNavigator = createMaterialBottomTabNavigator(
     {

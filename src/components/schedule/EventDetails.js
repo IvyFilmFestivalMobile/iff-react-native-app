@@ -18,7 +18,7 @@ class EventDetails extends React.Component {
         title: 'Event Details',
         tabBarVisible: false,
         headerStyle: styles.header,
-        headerTintColor: colors.header_color
+        headerTintColor: colors.header_color,
     };
 
     render() {
