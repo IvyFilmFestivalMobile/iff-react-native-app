@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import {EVENTBRITE_API_KEY, IFF_ORG_ID} from '../../Constants';
@@ -131,12 +131,17 @@ class Schedule extends React.Component {
                 );
             }) :
             this.state.loadingEvents ?
-                <Text style={styles.loadingText}>Loading...</Text> :
-                <Text style={styles.loadingText}>No events to display</Text>;
+                <View style={styles.loadingView}>
+                    <ActivityIndicator size="large" color={colors.spinner_color}/>
+                    <Text style={styles.loadingText}>Loading events...</Text>
+                </View> :
+                <View style={styles.loadingView}>
+                    <Text style={styles.loadingText}>No events to display</Text>
+                </View>;
         //TODO: chg to spinner
 
         return (
-            <ScrollView>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
                 {EventCards}
             </ScrollView>
@@ -146,7 +151,8 @@ class Schedule extends React.Component {
 
 const colors = {
     header_background_color: '#ee5956',
-    header_color: '#ffffff'
+    header_color: '#ffffff',
+    spinner_color: '#0e3737'
 };
 
 const styles = StyleSheet.create({
@@ -155,6 +161,13 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 4,
+    },
+    scrollContainer: {
+        flexGrow: 1
+    },
+    loadingView: {
+        flex: 1,
+        justifyContent: 'center',
     },
     loadingText: {
         textAlign: 'center',
