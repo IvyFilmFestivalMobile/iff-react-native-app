@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import {EVENTBRITE_API_KEY, IFF_ORG_ID} from '../../Constants';
@@ -31,9 +31,6 @@ class Schedule extends React.Component {
             header: (
                 <Appbar.Header style={styles.header}>
                     <Appbar.Content title={'Schedule'} color={colors.header_color}/>
-                    <Appbar.Action icon={'refresh'} onPress={() => {
-                        this.getEventsAndUpdate()
-                    }} color={colors.header_color}/>
                     <Appbar.Action icon={'filter-list'} onPress={() => navigation.state.params.openFilterDialog()}
                                    color={colors.header_color}/>
                     <Appbar.Action icon={'bookmark'} color={colors.header_color}/>
@@ -100,20 +97,20 @@ class Schedule extends React.Component {
         return events;
     };
 
-    getEventsAndUpdate() {
-        this.getEvents(this.state.filter, Date.now())
-            .then((eventsArr) => this.setState({events: eventsArr, loadingEvents: false}));
+    async getEventsAndUpdate() {
+        const newEvents = await this.getEvents(this.state.filter, Date.now());
+
+        this.setState({
+            events: newEvents,
+            loadingEvents: false,
+            refreshing: false
+        });
     }
 
     // TODO: very slow to update scrollview due to long event list. mb bring loading higher and either display spinner or scrollview
     async setFilter(newFilter) {
         await this.setState({filter: newFilter}); //Doesn't refresh on getEventsAndUpdate() so this is alternative
-        const newEvents = await this.getEvents(this.state.filter, Date.now());
-
-        this.setState({
-            events: newEvents,
-            loadingEvents: false
-        })
+        this.getEventsAndUpdate();
     };
 
     componentDidMount() {
@@ -141,7 +138,12 @@ class Schedule extends React.Component {
         //TODO: chg to spinner
 
         return (
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer} refreshControl={
+                <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.getEventsAndUpdate}
+                />
+            }>
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
                 {EventCards}
             </ScrollView>
