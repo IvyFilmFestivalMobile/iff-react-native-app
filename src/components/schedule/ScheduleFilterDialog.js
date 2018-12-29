@@ -17,12 +17,20 @@ class ScheduleFilterDialog extends React.Component {
 
         this.showDialog = this.showDialog.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
+        this.onDismissDialog = this.onDismissDialog.bind(this);
         this.submitFilterChange = this.submitFilterChange.bind(this);
     }
 
     showDialog = () => this.setState({visible: true});
 
-    hideDialog = () => this.setState({visible: false});
+    hideDialog = () => this.setState({
+        visible: false,
+    });
+
+    onDismissDialog() {
+        this.setState({filter: this.props.currFilter});
+        this.hideDialog();
+    }
 
     submitFilterChange() {
         this.props.setFilter(this.state.filter);
@@ -34,7 +42,7 @@ class ScheduleFilterDialog extends React.Component {
             <Portal>
                 <Dialog
                     visible={this.state.visible}
-                    onDismiss={this.hideDialog}>
+                    onDismiss={this.onDismissDialog}>
                     <Dialog.Title>Choose Event Filter</Dialog.Title>
                     <Dialog.Content>
                         <RadioButton.Group
