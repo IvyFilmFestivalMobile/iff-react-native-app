@@ -12,7 +12,7 @@ class Schedule extends React.Component {
 
         // Initial state
         this.state = {
-            filter: this.FilterEnum.ALL, // TODO: UP
+            filter: this.FilterEnum.UPCOMING,
             events: [],
             loadingEvents: false
         };
