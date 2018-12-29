@@ -1,21 +1,9 @@
 import React from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import EventCard from "./EventCard";
+import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import {EVENTBRITE_API_KEY, IFF_ORG_ID} from '../../Constants';
 import {Appbar, Text} from "react-native-paper";
-
-const header = () => {
-    return (
-        <Appbar.Header style={styles.header}>
-            <Appbar.Content title={'Schedule'} color={colors.header_color}/>
-            <Appbar.Action icon={'refresh'} onPress={() => {
-                this.getEventsAndUpdate()
-            }} color={colors.header_color}/>
-            <Appbar.Action icon={'filter-list'} color={colors.header_color}/>
-            <Appbar.Action icon={'bookmark'} color={colors.header_color}/>
-        </Appbar.Header>
-    );
-};
 
 class Schedule extends React.Component {
 
@@ -32,15 +20,30 @@ class Schedule extends React.Component {
         this.getEvents = this.getEvents.bind(this);
         this.getEventsAndUpdate = this.getEventsAndUpdate.bind(this);
         this.setFilter = this.setFilter.bind(this);
+        this.dialog = React.createRef();
+        this.openFilterDialog = this.openFilterDialog.bind(this);
     }
 
     FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
 
-    static navigationOptions = () => {
+    static navigationOptions = ({navigation}) => {
         return ({
-            header: header,
+            header: (
+                <Appbar.Header style={styles.header}>
+                    <Appbar.Content title={'Schedule'} color={colors.header_color}/>
+                    <Appbar.Action icon={'refresh'} onPress={() => {
+                        this.getEventsAndUpdate()
+                    }} color={colors.header_color}/>
+                    <Appbar.Action icon={'filter-list'} onPress={() => navigation.state.params.openFilterDialog()}
+                                   color={colors.header_color}/>
+                    <Appbar.Action icon={'bookmark'} color={colors.header_color}/>
+                </Appbar.Header>),
         });
     };
+
+    openFilterDialog() {
+        this.dialog.current.showDialog();
+    }
 
     getEvents = async (filter, date) => {
         const events = [];
@@ -102,12 +105,22 @@ class Schedule extends React.Component {
             .then((eventsArr) => this.setState({events: eventsArr, loadingEvents: false}));
     }
 
-    setFilter(newFilter) {
-        this.setState({filter: newFilter});
+    // TODO: very slow to update scrollview due to long event list. mb bring loading higher and either display spinner or scrollview
+    async setFilter(newFilter) {
+        await this.setState({filter: newFilter}); //Doesn't refresh on getEventsAndUpdate() so this is alternative
+        const newEvents = await this.getEvents(this.state.filter, Date.now());
+
+        this.setState({
+            events: newEvents,
+            loadingEvents: false
+        })
     };
 
     componentDidMount() {
         this.getEventsAndUpdate();
+        this.props.navigation.setParams({
+            openFilterDialog: this.openFilterDialog
+        });
     }
 
     render() {
@@ -124,6 +137,7 @@ class Schedule extends React.Component {
 
         return (
             <ScrollView>
+                <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
                 {EventCards}
             </ScrollView>
         );
