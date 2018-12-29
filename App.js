@@ -1,12 +1,27 @@
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
-import Home from './src/components/Home';
+import Info from './src/components/Info';
 import Schedule from './src/components/schedule/Schedule';
 import EventDetails from './src/components/schedule/EventDetails';
 import Films from './src/components/Films';
 import {createAppContainer, createStackNavigator} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import FATabBarIcon from "./src/components/shared/FATabBarIcon";
+import MaterialTabBarIcon from "./src/components/shared/MaterialTabBarIcon";
+
+const InfoNavigator = createStackNavigator(
+    {
+        Info: {
+            screen: Info
+        }
+    }, {
+        initialRouteName: 'Info',
+    }
+);
+
+InfoNavigator.navigationOptions = {
+    tabBarIcon: MaterialTabBarIcon('info-outline'),
+};
 
 const ScheduleNavigator = createStackNavigator(
     {
@@ -16,9 +31,7 @@ const ScheduleNavigator = createStackNavigator(
         EventDetails: {
             screen: EventDetails,
         }
-    }, {
-        initialRouteName: 'Schedule',
-    }
+    },
 );
 
 ScheduleNavigator.navigationOptions = ({navigation}) => {
@@ -35,15 +48,13 @@ ScheduleNavigator.navigationOptions = ({navigation}) => {
 
 const AppNavigator = createMaterialBottomTabNavigator(
     {
-        Home: {
-            screen: Home,
-        },
+        Info: InfoNavigator,
         Schedule: ScheduleNavigator,
         Films: {
             screen: Films
         }
     }, {
-      initialRouteName: 'Home',
+        initialRouteName: 'Schedule',
       activeColor: '#f0edf6',
       barStyle: { backgroundColor: '#ee5956' }
 });

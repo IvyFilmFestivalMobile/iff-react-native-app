@@ -135,7 +135,6 @@ class Schedule extends React.Component {
                 <View style={styles.loadingView}>
                     <Text style={styles.loadingText}>No events to display</Text>
                 </View>;
-        //TODO: chg to spinner
 
         return (
             <ScrollView contentContainerStyle={styles.scrollContainer} refreshControl={
