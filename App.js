@@ -3,7 +3,7 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import Info from './src/components/Info';
 import Schedule from './src/components/schedule/Schedule';
 import EventDetails from './src/components/schedule/EventDetails';
-import Films from './src/components/Films';
+import Films from './src/components/films/Films';
 import {createAppContainer, createStackNavigator} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import FATabBarIcon from "./src/components/shared/FATabBarIcon";
@@ -46,13 +46,37 @@ ScheduleNavigator.navigationOptions = ({navigation}) => {
     };
 };
 
+const FilmsNavigator = createStackNavigator(
+    {
+        Films: {
+            screen: Films,
+        },
+        // EventDetails: {
+        //     screen: EventDetails,
+        // }
+    }, {
+        initialRouteName: 'Films',
+    }
+);
+
+FilmsNavigator.navigationOptions = ({navigation}) => {
+    let tabBarVisible = true;
+    if (navigation.state.index > 0) {
+        tabBarVisible = false;
+    }
+
+    return {
+        tabBarIcon: MaterialTabBarIcon('movie'),
+        tabBarVisible,
+    };
+};
+
+
 const AppNavigator = createMaterialBottomTabNavigator(
     {
         Info: InfoNavigator,
         Schedule: ScheduleNavigator,
-        Films: {
-            screen: Films
-        }
+        Films: FilmsNavigator,
     }, {
         initialRouteName: 'Schedule',
       activeColor: '#f0edf6',
