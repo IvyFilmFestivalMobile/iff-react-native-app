@@ -1,6 +1,5 @@
 export const IFF_ORG_ID = '79179389909';
 export const EVENTBRITE_API_KEY = '';
-//WBSWLOG3WTW45U6RHBTB
 export const MOVIE_QUERY = {
     BASE_URL: "https://api.themoviedb.org/3/",
     IMAGE_URL: "http://image.tmdb.org/t/p/w185",
