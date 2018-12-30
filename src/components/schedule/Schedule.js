@@ -2,6 +2,7 @@ import React from 'react';
 import {ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
+import EventStorage from "./EventStorage";
 import {EVENTBRITE_API_KEY, IFF_ORG_ID} from '../../Constants';
 import {Appbar, Text} from "react-native-paper";
 
@@ -14,14 +15,22 @@ class Schedule extends React.Component {
         this.state = {
             filter: this.FilterEnum.UPCOMING,
             events: [],
+            savedEvents: [],
             loadingEvents: false
         };
+
+        EventStorage.retrieveData('savedEvents')
+            .then((storedSavedEvents) => this.setState({savedEvents: storedSavedEvents || []}));
+        //Saved events still empty? till render. also retrieve here or in componentWillMount?
 
         this.getEvents = this.getEvents.bind(this);
         this.getEventsAndUpdate = this.getEventsAndUpdate.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.dialog = React.createRef();
         this.openFilterDialog = this.openFilterDialog.bind(this);
+        this.addSavedEvent = this.addSavedEvent.bind(this);
+        this.removeSavedEvent = this.removeSavedEvent.bind(this);
+        this.updateSavedEventsStorage = this.updateSavedEventsStorage.bind(this);
     }
 
     FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
@@ -55,30 +64,37 @@ class Schedule extends React.Component {
             });
             const eventData = await apiCall.json();
 
+            let currSavedEvents = this.state.savedEvents;
             if (typeof eventData !== 'undefined') {
                 switch (filter) {
                     case this.FilterEnum.ALL:
                         eventData.events.forEach(function (element) {
+                            let savedEventStatus = currSavedEvents.includes(element.id);
                             events.push({
                                 name: element.name.text,
                                 description: element.description.text,
+                                id: element.id,
                                 url: element.url,
                                 start: element.start.utc,
                                 end: element.end.utc,
-                                image_url: element.logo.url //logo.original.url 8x longer
+                                image_url: element.logo.url, //logo.original.url 8x longer
+                                saved: savedEventStatus,
                             });
                         });
                         break;
                     case this.FilterEnum.UPCOMING:
                         eventData.events.forEach(function (element) {
+                            let savedEventStatus = currSavedEvents.includes(element.id);
                             if (element.end.utc >= date) {
                                 events.push({
                                     name: element.name.text,
                                     description: element.description.text,
+                                    id: element.id,
                                     url: element.url,
                                     start: element.start.utc,
                                     end: element.end.utc,
-                                    image_url: element.logo.url //logo.original.url 8x longer
+                                    image_url: element.logo.url, //logo.original.url 8x longer
+                                    saved: savedEventStatus,
                                 });
                             }
                         });
@@ -113,18 +129,55 @@ class Schedule extends React.Component {
         this.getEventsAndUpdate();
     };
 
-    componentDidMount() {
+    //TODO: Consider moving event storage funcs to different class
+    addSavedEvent(eventId) {
+        this.setState(currState => {
+            currState.savedEvents.push(eventId);
+            return {
+                savedEvents: currState.savedEvents
+            };
+        });
+
+        this.updateSavedEventsStorage();
+    }
+
+    removeSavedEvent(eventId) {
+        this.setState(currState => {
+            for (let i = 0; i < currState.savedEvents.length; i++) {
+                if (currState.savedEvents[i] === eventId) {
+                    currState.savedEvents.splice(i, 1);
+                }
+            }
+
+            return {
+                savedEvents: currState.savedEvents
+            };
+        });
+
+        this.updateSavedEventsStorage();
+    }
+
+    updateSavedEventsStorage() {
+        EventStorage.storeData('savedEvents', this.state.savedEvents);
+    }
+
+    async componentDidMount() {
         this.getEventsAndUpdate();
         this.props.navigation.setParams({
             openFilterDialog: this.openFilterDialog
         });
     }
 
+    async componentWillUnmount() {
+        await EventStorage.storeData('savedEvents', this.state.savedEvents);
+    }
+
     render() {
         const EventCards = (typeof this.state.events !== 'undefined') && this.state.events.length ?
             this.state.events.map((event, eventKey) => {
                 return (
-                    <EventCard event={event} navigation={this.props.navigation} key={eventKey}/>
+                    <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
+                               removeSavedEvent={this.removeSavedEvent} key={eventKey}/>
                 );
             }) :
             this.state.loadingEvents ?

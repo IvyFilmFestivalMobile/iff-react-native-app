@@ -4,6 +4,16 @@ import {StyleSheet} from 'react-native';
 import {Card, IconButton, Subheading, Title} from 'react-native-paper';
 
 class EventCard extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            saved: this.props.event.saved
+        };
+
+        this.getDurationStrings = this.getDurationStrings.bind(this);
+        this.toggleSavedState = this.toggleSavedState.bind(this);
+    }
 
     getDurationStrings(startTime, endTime) {
         const localStartTime = moment(startTime);
@@ -15,12 +25,23 @@ class EventCard extends React.Component {
         return [dateDurationStr, timeDurationStr];
     }
 
+    async toggleSavedState() {
+        await this.setState(currState => {
+            return {saved: !currState.saved}
+        });
+
+        if (this.state.saved) {
+            this.props.addSavedEvent(this.props.event.id);
+        } else {
+            this.props.removeSavedEvent(this.props.event.id);
+        }
+    }
+
     render() {
         return (
-            <Card style={styles.card}
-                  onPress={() => {
-                      this.props.navigation.navigate('EventDetails', {event: this.props.event})
-                  }}>
+            <Card style={styles.card} onPress={() => {
+                this.props.navigation.navigate('EventDetails', {event: this.props.event})
+            }}>
                 <Card.Cover source={{uri: this.props.event.image_url}}/>
                 <Card.Content>
                     <Title style={styles.title}>{this.props.event.name}</Title>
@@ -29,7 +50,8 @@ class EventCard extends React.Component {
                     {/*<Paragraph>{this.shortenDescription(this.props.description)}</Paragraph>*/}
                 </Card.Content>
                 <Card.Actions style={styles.actions}>
-                    <IconButton icon={this.props.event.saved ? 'bookmark' : 'bookmark-border'}/>
+                    <IconButton icon={this.state.saved ? 'bookmark' : 'bookmark-border'}
+                                onPress={() => this.toggleSavedState()}/>
                     <IconButton icon={'share'}/>
                 </Card.Actions>
             </Card>
