@@ -56,7 +56,7 @@ class Schedule extends React.Component {
         this.setState({loadingEvents: true});
 
         try {
-            const apiCall = await fetch(`https://www.eventbriteapi.com/v3/organizations/${IFF_ORG_ID}/events`, {
+            const apiCall = await fetch(`https://www.eventbriteapi.com/v3/organizations/${IFF_ORG_ID}/events/?expand=venue`, {
                 headers: new Headers({
                     'Authorization': 'Bearer ' + EVENTBRITE_API_KEY,
                     'Content-Type': 'application/json'
@@ -73,11 +73,18 @@ class Schedule extends React.Component {
                             events.push({
                                 name: element.name.text,
                                 description: element.description.text,
+                                description_html: element.description.html,
                                 id: element.id,
                                 url: element.url,
                                 start: element.start.utc,
                                 end: element.end.utc,
                                 image_url: element.logo.url, //logo.original.url 8x longer
+                                location: {
+                                    name: element.venue.name,
+                                    latitude: element.venue.latitude,
+                                    longitude: element.venue.longitude,
+                                    address_display: element.venue.address.localized_multi_line_address_display
+                                },
                                 saved: savedEventStatus,
                             });
                         });
@@ -89,11 +96,18 @@ class Schedule extends React.Component {
                                 events.push({
                                     name: element.name.text,
                                     description: element.description.text,
+                                    description_html: element.description.html,
                                     id: element.id,
                                     url: element.url,
                                     start: element.start.utc,
                                     end: element.end.utc,
                                     image_url: element.logo.url, //logo.original.url 8x longer
+                                    location: {
+                                        name: element.venue.name,
+                                        latitude: element.venue.latitude,
+                                        longitude: element.venue.longitude,
+                                        address_display: element.venue.address.localized_multi_line_address_display
+                                    },
                                     saved: savedEventStatus,
                                 });
                             }
