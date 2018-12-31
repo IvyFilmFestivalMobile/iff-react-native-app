@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import {StyleSheet} from 'react-native';
+import {Share, StyleSheet} from 'react-native';
 import {Card, IconButton, Subheading, Title} from 'react-native-paper';
 
 class EventCard extends React.Component {
@@ -13,6 +13,7 @@ class EventCard extends React.Component {
 
         this.getDurationStrings = this.getDurationStrings.bind(this);
         this.toggleSavedState = this.toggleSavedState.bind(this);
+        this.shareEvent = this.shareEvent.bind(this);
     }
 
     getDurationStrings(startTime, endTime) {
@@ -37,6 +38,18 @@ class EventCard extends React.Component {
         }
     }
 
+    async shareEvent() {
+        const shareTitle = 'Join Ivy Film Festival @ ' + this.props.event.name;
+        await Share.share({
+            message: this.props.event.url,
+            title: shareTitle,
+            url: this.props.event.url, //What does this do on IOS?
+        }, {
+            subject: shareTitle,
+            dialogTitle: 'Share Event Link'
+        });
+    }
+
     render() {
         return (
             <Card style={styles.card} onPress={() => {
@@ -50,9 +63,10 @@ class EventCard extends React.Component {
                     {/*<Paragraph>{this.shortenDescription(this.props.description)}</Paragraph>*/}
                 </Card.Content>
                 <Card.Actions style={styles.actions}>
+                    <IconButton icon={'event'}/>
                     <IconButton icon={this.state.saved ? 'bookmark' : 'bookmark-border'}
                                 onPress={() => this.toggleSavedState()}/>
-                    <IconButton icon={'share'}/>
+                    <IconButton icon={'share'} onPress={this.shareEvent}/>
                 </Card.Actions>
             </Card>
         );
