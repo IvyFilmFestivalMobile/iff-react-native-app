@@ -1,9 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
-import Header from "../shared/Header";
-import MaterialTabBarIcon from "../shared/MaterialTabBarIcon";
-import {Card, Appbar, Text} from "react-native-paper";
-import {MOVIE_QUERY, MOVIE_FIELDS, FILMS} from '../../Constants';
+import {ScrollView, StyleSheet} from 'react-native';
+import {Appbar} from "react-native-paper";
+import {FILMS, MOVIE_QUERY} from '../../Constants';
 import FilmCard from './FilmCard';
 
 class Films extends React.Component {
@@ -33,7 +31,7 @@ class Films extends React.Component {
 
     searchmovies = () => {
         this.setState({loading: true});
-    }
+    };
 
     // async componentDidMount() {
         
@@ -66,7 +64,7 @@ class Films extends React.Component {
     // }
     getEndpoint = (title) => {
         return MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  title + "&" + MOVIE_QUERY.API_KEY;
-    }
+    };
     componentDidMount() {
     
         Promise.all(FILMS.map(film => fetch(this.getEndpoint(film))
