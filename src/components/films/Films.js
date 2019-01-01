@@ -1,10 +1,7 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import Header from "../shared/Header";
-import MaterialTabBarIcon from "../shared/MaterialTabBarIcon";
-import {Card, Appbar, Text} from "react-native-paper";
-import {MOVIE_QUERY, MOVIE_FIELDS} from '../../Constants';
-import FilmCard from './FilmCard';
+import {StyleSheet} from 'react-native';
+import {Appbar, Card, Text} from "react-native-paper";
+import {MOVIE_QUERY} from '../../Constants';
 
 class Films extends React.Component {
     constructor(props) {
@@ -33,7 +30,7 @@ class Films extends React.Component {
 
     searchmovies = () => {
         this.setState({loading: true});
-    }
+    };
 
     async componentDidMount() {
         try {

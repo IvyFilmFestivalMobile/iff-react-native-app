@@ -5,6 +5,7 @@ import {Divider, FAB, Headline, Paragraph, Subheading, Text, Title} from "react-
 import moment from 'moment';
 import {MaterialIcons} from '@expo/vector-icons';
 import HTMLView from "react-native-htmlview";
+import {Button, MaterialHeaderButtons} from '../shared/MaterialHeader'
 
 const colors = {
     header_background_color: '#ee5956',
@@ -49,14 +50,33 @@ class EventDetails extends React.Component {
     constructor(props) {
         super(props);
 
+        // Store initial saved status equivalent to event saved value
+        // Relies on event saved property to update once save button is toggled
+        this.state = {
+            saved: this.props.navigation.state.params.saved
+        };
+
         this.getDurationStrings = this.getDurationStrings.bind(this);
         this.openNativeDirectionsIntent = this.openNativeDirectionsIntent.bind(this);
+        this.toggleSaved = this.toggleSaved.bind(this);
     }
 
-    static navigationOptions = {
-        title: 'Event Details',
-        headerStyle: styles.header,
-        headerTintColor: colors.header_color,
+    static navigationOptions = ({navigation}) => {
+        return ({
+            title: 'Event Details',
+            headerStyle: styles.header,
+            headerTintColor: colors.header_color,
+            headerRight: (
+                <MaterialHeaderButtons>
+                    <Button title="Save Event"
+                            iconName={navigation.state.params.saved ? "bookmark" : "bookmark-border"}
+                            color={colors.header_color}
+                            onPress={() => navigation.state.params.toggleSaved()}/>
+                    <Button title="Share Event" iconName="share" color={colors.header_color}
+                            onPress={() => navigation.state.params.shareEvent()}/>
+                </MaterialHeaderButtons>
+            ),
+        });
     };
 
     getDurationStrings(startTime, endTime) {
@@ -77,6 +97,30 @@ class EventDetails extends React.Component {
         } else if (Platform.OS === "android") {
             Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + locationString);
         }
+    }
+
+    toggleSaved() {
+        // Negate event's saved property and update Card component
+        this.props.navigation.state.params.toggleSavedState();
+
+        // Negate saved param in navigation state to update header
+        this.props.navigation.setParams({
+            saved: !this.state.saved,
+        });
+
+        // Negate saved property for future param updates
+        this.setState(currState => {
+            return ({
+                saved: !currState.saved
+            });
+        });
+    }
+
+    componentWillMount() {
+        // Set navigation parameters for use in header
+        this.props.navigation.setParams({
+            toggleSaved: this.toggleSaved,
+        });
     }
 
     render() {

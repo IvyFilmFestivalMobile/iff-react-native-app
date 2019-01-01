@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Ivy Film Festival",
-    "slug": "IvyFilmFestival",
-    "privacy": "public",
+    "slug": "ivyfilmfestival",
+    "privacy": "unlisted",
     "sdkVersion": "31.0.0",
     "platforms": [
       "ios",
@@ -24,6 +24,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/IvyFilmFestivalMobile/iff-react-native-app"
   }
 }

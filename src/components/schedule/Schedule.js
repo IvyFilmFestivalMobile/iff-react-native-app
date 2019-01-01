@@ -147,7 +147,14 @@ class Schedule extends React.Component {
     addSavedEvent(eventId) {
         this.setState(currState => {
             currState.savedEvents.push(eventId);
+
+            // Negate saved property of specified event
+            // TODO: possibly replace savedEvents array by storing events with saved=true
+            currState.events.find(event => event.id === eventId).saved =
+                !currState.events.find(event => event.id === eventId).saved;
+
             return {
+                events: currState.events,
                 savedEvents: currState.savedEvents
             };
         });
@@ -163,7 +170,12 @@ class Schedule extends React.Component {
                 }
             }
 
+            // Negate saved property of specified event
+            currState.events.find(event => event.id === eventId).saved =
+                !currState.events.find(event => event.id === eventId).saved;
+
             return {
+                events: currState.events,
                 savedEvents: currState.savedEvents
             };
         });

@@ -46,14 +46,19 @@ class EventCard extends React.Component {
             url: this.props.event.url, //What does this do on IOS?
         }, {
             subject: shareTitle,
-            dialogTitle: 'Share Event Link'
+            dialogTitle: 'Share event link'
         });
     }
 
     render() {
         return (
             <Card style={styles.card} onPress={() => {
-                this.props.navigation.navigate('EventDetails', {event: this.props.event})
+                this.props.navigation.navigate('EventDetails', {
+                    event: this.props.event,
+                    saved: this.props.event.saved,
+                    shareEvent: this.shareEvent,
+                    toggleSavedState: this.toggleSavedState
+                })
             }}>
                 <Card.Cover source={{uri: this.props.event.image_url}}/>
                 <Card.Content>
