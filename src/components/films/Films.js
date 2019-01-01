@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import Header from "../shared/Header";
 import MaterialTabBarIcon from "../shared/MaterialTabBarIcon";
 import {Card, Appbar, Text} from "react-native-paper";
@@ -75,22 +75,28 @@ class Films extends React.Component {
             this.setState(prevState => ({
                 films: [...prevState.films, filmData.results[0]]    
         }))})));
+
+        // fetch("https://api.themoviedb.org/3/movie/13?api_key=151dfa1b4c6a83a02970c0c6612615b3")
+        // .then(info => info.json())
+        // .then(data => console.log(data));
     }
 
     render() {
         
         const { films, loading } = this.state;
-            console.log(films);
-            return(
-                
-                films.map((film, key) => {
-                    return (
-                        <FilmCard synopsis={film.overview} 
-                        image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
-                        key = {key}/>
-                    )
-                })       
-            );      
+        const cards = films.map((film, key) => {
+            return (
+                <FilmCard synopsis={film.overview} 
+                image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
+                film_name = {film.title}
+                release_date = {film.release_date}
+                key = {key}/>
+            )
+        });
+
+        return(
+            <ScrollView>{cards}</ScrollView>  
+        );      
     }
 }
 
