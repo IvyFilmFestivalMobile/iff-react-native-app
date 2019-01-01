@@ -8,9 +8,9 @@ class FilmCard extends React.Component {
     render() {
         return (
             <Card>
-                {/* <Card.Cover source={{uri: this.props.film.image_url}}/> */}
+                <Card.Cover source={{uri: this.props.image_url}}/>
                 <Text>
-                    {this.props.film.synopsis}
+                    {this.props.synopsis}
                 </Text>
             </Card>
         );

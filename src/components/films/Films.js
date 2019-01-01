@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import Header from "../shared/Header";
 import MaterialTabBarIcon from "../shared/MaterialTabBarIcon";
 import {Card, Appbar, Text} from "react-native-paper";
-import {MOVIE_QUERY, MOVIE_FIELDS} from '../../Constants';
+import {MOVIE_QUERY, MOVIE_FIELDS, FILMS} from '../../Constants';
 import FilmCard from './FilmCard';
 
 class Films extends React.Component {
@@ -35,51 +35,62 @@ class Films extends React.Component {
         this.setState({loading: true});
     }
 
-    async componentDidMount() {
-        try {
-            const endpoint =
-                MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  "Forrest Gump" + "&" + MOVIE_QUERY.API_KEY;
-            const apiCall = 
-                await fetch(endpoint);
-            const filmData = 
-                await apiCall.json();
-                this.setState(prevState => ({
-                    films: [...prevState.films, filmData.results[0]]
-                }));
-                this.setState({loading: false});
-        } catch(err) {
-            console.log("error in fetching data", err);
-        }
+    // async componentDidMount() {
+        
+    //     try {
+    //         FILMS.forEach(async function(film) {
+    //             // console.log(film);
+    //             const endpoint = MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  film + "&" + MOVIE_QUERY.API_KEY;
+    //             const apiCall = await fetch(endpoint);  
+    //             const filmData = 
+    //                 await apiCall.json();
+    //                 console.log(filmData);
+    //                 this.setState(prevState => ({
+    //                     films: [...prevState.films, filmData.results[0]]
+    //                 }));
+    //                 // this.setState({loading: false});
+    //         });
+    //         // this.setState
+    //         this.setState({loading: false});
+    //         // const endpoint = MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  "Forrest Gump" + "&" + MOVIE_QUERY.API_KEY;
+    //         // const apiCall = await fetch(endpoint);  
+    //         // const filmData = 
+    //         //     await apiCall.json();
+    //         //     this.setState(prevState => ({
+    //         //         films: [...prevState.films, filmData.results[0]]
+    //         //     }));
+    //         //     this.setState({loading: false});
+    //     } catch(err) {
+    //         return(err);
+    //     }
+    // }
+    getEndpoint = (title) => {
+        return MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  title + "&" + MOVIE_QUERY.API_KEY;
+    }
+    componentDidMount() {
+    
+        Promise.all(FILMS.map(film => fetch(this.getEndpoint(film))
+        .then(res => res.json())
+        .then(filmData => {
+            this.setState(prevState => ({
+                films: [...prevState.films, filmData.results[0]]    
+        }))})));
     }
 
     render() {
         
         const { films, loading } = this.state;
-        if(!loading) {
+            console.log(films);
             return(
-            
-                films.map((film) => {
-                    return (
-                        // <FilmCard synopsis={film.overview} />
-                        <Card>
-                            <Text>{film.overview}</Text>
-                        </Card>
-                    )
-                }) 
-                // <Card>
-                //     <Text>{this.state.films[0]}</Text>
-                // </Card>
-                // <FilmCard synopsis= {this.state.films[0].overview}/>
-                // source = {MOVIE_QUERY.IMAGE_URL + this.state.films[0].poster_path}/>
-                // <FilmCard></FilmCard>    
                 
-            );
-        }
-        else {
-            console.log("err");
-            return null;
-        }
-        
+                films.map((film, key) => {
+                    return (
+                        <FilmCard synopsis={film.overview} 
+                        image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
+                        key = {key}/>
+                    )
+                })       
+            );      
     }
 }
 

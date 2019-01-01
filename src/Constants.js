@@ -1,5 +1,6 @@
 export const IFF_ORG_ID = '79179389909';
 export const EVENTBRITE_API_KEY = '';
+
 export const MOVIE_QUERY = {
     BASE_URL: "https://api.themoviedb.org/3/",
     IMAGE_URL: "http://image.tmdb.org/t/p/w185",
@@ -7,6 +8,10 @@ export const MOVIE_QUERY = {
     SEARCH_QUERY: "search/movie?query=",
     
 }
+export const FILMS = [
+    "Vox Lux", "Wild Nights With Emily", "Forrest Gump",
+]
+
 export const MOVIE_FIELDS = {
     MAIN_TITLE: "Movie Database App",
     SECONDARY_TITLE: "Movie Details",
