@@ -12,6 +12,7 @@
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-native-htmlview": "^0.13.0",
+    "react-native-panel": "^1.0.4",
     "react-native-paper": "^2.4.0",
     "react-navigation": "^3.0.9",
     "react-navigation-header-buttons": "^2.1.1",
