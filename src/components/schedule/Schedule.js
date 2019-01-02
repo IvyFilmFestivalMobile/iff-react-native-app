@@ -177,12 +177,16 @@ class Schedule extends React.Component {
         await EventStorage.storeData('savedEvents', this.state.savedEvents);
     }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return !(nextState.filter === this.state.filter && nextState.events === this.state.events);
+    }
+
     render() {
         const EventCards = (typeof this.state.filteredEvents !== 'undefined') && this.state.filteredEvents.length ?
             this.state.filteredEvents.map((event, eventKey) => {
                 return (
                     <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
-                               removeSavedEvent={this.removeSavedEvent} key={eventKey}/>
+                               removeSavedEvent={this.removeSavedEvent} key={event.id}/>
                 );
             }) :
             this.state.loadingEvents ?
