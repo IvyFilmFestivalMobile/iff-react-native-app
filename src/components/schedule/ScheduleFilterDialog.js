@@ -21,7 +21,9 @@ class ScheduleFilterDialog extends React.Component {
         this.submitFilterChange = this.submitFilterChange.bind(this);
     }
 
-    showDialog = () => this.setState({visible: true});
+    showDialog = () => this.setState({
+        visible: true
+    });
 
     hideDialog = () => this.setState({
         visible: false,
@@ -51,14 +53,20 @@ class ScheduleFilterDialog extends React.Component {
                         >
                             <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.ALL})}>
                                 <View style={styles.row}>
-                                    <Paragraph>All Events</Paragraph>
+                                    <Paragraph>All</Paragraph>
                                     <RadioButton value={this.FilterEnum.ALL}/>
                                 </View>
                             </TouchableRipple>
                             <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.UPCOMING})}>
                                 <View style={styles.row}>
-                                    <Paragraph>Upcoming Events</Paragraph>
+                                    <Paragraph>Upcoming</Paragraph>
                                     <RadioButton value={this.FilterEnum.UPCOMING}/>
+                                </View>
+                            </TouchableRipple>
+                            <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.SAVED})}>
+                                <View style={styles.row}>
+                                    <Paragraph>Saved</Paragraph>
+                                    <RadioButton value={this.FilterEnum.SAVED}/>
                                 </View>
                             </TouchableRipple>
                         </RadioButton.Group>
