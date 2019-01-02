@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
+import {RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import EventStorage from "./EventStorage";
@@ -15,6 +15,7 @@ class Schedule extends React.Component {
         this.state = {
             filter: this.FilterEnum.UPCOMING,
             events: [],
+            filteredEvents: [],
             savedEvents: [],
             loadingEvents: false
         };
@@ -24,7 +25,7 @@ class Schedule extends React.Component {
         //Saved events still empty? till render. also retrieve here or in componentWillMount?
 
         this.getEvents = this.getEvents.bind(this);
-        this.getEventsAndUpdate = this.getEventsAndUpdate.bind(this);
+        this.applyEventsFilter = this.applyEventsFilter.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.dialog = React.createRef();
         this.openFilterDialog = this.openFilterDialog.bind(this);
@@ -42,7 +43,6 @@ class Schedule extends React.Component {
                     <Appbar.Content title={'Schedule'} color={colors.header_color}/>
                     <Appbar.Action icon={'filter-list'} onPress={() => navigation.state.params.openFilterDialog()}
                                    color={colors.header_color}/>
-                    <Appbar.Action icon={'bookmark'} color={colors.header_color}/>
                 </Appbar.Header>),
         });
     };
@@ -51,7 +51,7 @@ class Schedule extends React.Component {
         this.dialog.current.showDialog();
     }
 
-    getEvents = async (filter, date) => {
+    getEvents = async () => {
         const events = [];
         this.setState({loadingEvents: true});
 
@@ -66,81 +66,60 @@ class Schedule extends React.Component {
 
             let currSavedEvents = this.state.savedEvents;
             if (typeof eventData !== 'undefined') {
-                switch (filter) {
-                    case this.FilterEnum.ALL:
-                        eventData.events.forEach(function (element) {
-                            let savedEventStatus = currSavedEvents.includes(element.id);
-                            events.push({
-                                name: element.name.text,
-                                description: element.description.text,
-                                description_html: element.description.html,
-                                id: element.id,
-                                url: element.url,
-                                start: element.start.utc,
-                                end: element.end.utc,
-                                image_url: element.logo.url, //logo.original.url 8x longer
-                                location: {
-                                    name: element.venue.name,
-                                    latitude: element.venue.latitude,
-                                    longitude: element.venue.longitude,
-                                    address_display: element.venue.address.localized_multi_line_address_display
-                                },
-                                saved: savedEventStatus,
-                            });
-                        });
-                        break;
-                    case this.FilterEnum.UPCOMING:
-                        eventData.events.forEach(function (element) {
-                            let savedEventStatus = currSavedEvents.includes(element.id);
-                            if (element.end.utc >= date) {
-                                events.push({
-                                    name: element.name.text,
-                                    description: element.description.text,
-                                    description_html: element.description.html,
-                                    id: element.id,
-                                    url: element.url,
-                                    start: element.start.utc,
-                                    end: element.end.utc,
-                                    image_url: element.logo.url, //logo.original.url 8x longer
-                                    location: {
-                                        name: element.venue.name,
-                                        latitude: element.venue.latitude,
-                                        longitude: element.venue.longitude,
-                                        address_display: element.venue.address.localized_multi_line_address_display
-                                    },
-                                    saved: savedEventStatus,
-                                });
-                            }
-                        });
-                        break;
-                    case this.FilterEnum.SAVED:
-                        break;
-                }
+                eventData.events.forEach(function (element) {
+                    let savedEventStatus = currSavedEvents.includes(element.id);
+                    events.push({
+                        name: element.name.text,
+                        description: element.description.text,
+                        description_html: element.description.html,
+                        id: element.id,
+                        url: element.url,
+                        start: element.start.utc,
+                        end: element.end.utc,
+                        image_url: element.logo.url, //logo.original.url 8x longer
+                        location: {
+                            name: element.venue.name,
+                            latitude: element.venue.latitude,
+                            longitude: element.venue.longitude,
+                            address_display: element.venue.address.localized_multi_line_address_display
+                        },
+                        saved: savedEventStatus,
+                    });
+                });
+
+                let currFilter = this.state.filter;
+                this.setState({
+                    events: events,
+                    filteredEvents: this.applyEventsFilter(events, currFilter),
+                    loadingEvents: false
+                });
             }
         } catch (error) {
             console.log('Error parsing and retrieving event data');
             this.setState({loadingEvents: false});
             throw error;
         }
-
-
-        return events;
     };
 
-    async getEventsAndUpdate() {
-        const newEvents = await this.getEvents(this.state.filter, Date.now());
-
-        this.setState({
-            events: newEvents,
-            loadingEvents: false,
-            refreshing: false
-        });
+    applyEventsFilter(events, filter) {
+        switch (filter) {
+            case this.FilterEnum.ALL:
+                return events;
+            case this.FilterEnum.UPCOMING:
+                return events.filter(event => event.end > Date.now);
+            case this.FilterEnum.SAVED:
+                return events.filter(event => event.saved);
+        }
     }
 
     // TODO: very slow to update scrollview due to long event list. mb bring loading higher and either display spinner or scrollview
     async setFilter(newFilter) {
-        await this.setState({filter: newFilter}); //Doesn't refresh on getEventsAndUpdate() so this is alternative
-        this.getEventsAndUpdate();
+        await this.setState(currState => {
+            return ({
+                filter: newFilter,
+                filteredEvents: this.applyEventsFilter(currState.events, newFilter)
+            });
+        });
     };
 
     //TODO: Consider moving event storage funcs to different class
@@ -188,7 +167,7 @@ class Schedule extends React.Component {
     }
 
     async componentDidMount() {
-        this.getEventsAndUpdate();
+        await this.getEvents();
         this.props.navigation.setParams({
             openFilterDialog: this.openFilterDialog
         });
@@ -199,8 +178,8 @@ class Schedule extends React.Component {
     }
 
     render() {
-        const EventCards = (typeof this.state.events !== 'undefined') && this.state.events.length ?
-            this.state.events.map((event, eventKey) => {
+        const EventCards = (typeof this.state.filteredEvents !== 'undefined') && this.state.filteredEvents.length ?
+            this.state.filteredEvents.map((event, eventKey) => {
                 return (
                     <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
                                removeSavedEvent={this.removeSavedEvent} key={eventKey}/>
@@ -208,7 +187,6 @@ class Schedule extends React.Component {
             }) :
             this.state.loadingEvents ?
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size="large" color={colors.spinner_color}/>
                     <Text style={styles.loadingText}>Loading events...</Text>
                 </View> :
                 <View style={styles.loadingView}>
@@ -218,8 +196,8 @@ class Schedule extends React.Component {
         return (
             <ScrollView contentContainerStyle={styles.scrollContainer} refreshControl={
                 <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.getEventsAndUpdate}
+                    refreshing={this.state.loadingEvents}
+                    onRefresh={this.getEvents}
                 />
             }>
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
