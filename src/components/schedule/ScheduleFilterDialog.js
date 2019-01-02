@@ -39,6 +39,10 @@ class ScheduleFilterDialog extends React.Component {
         this.hideDialog();
     }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return !(nextState.filter === this.state.filter && nextState.visible === this.state.visible);
+    }
+
     render() {
         return (
             <Portal>
