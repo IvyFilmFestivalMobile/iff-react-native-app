@@ -178,7 +178,8 @@ class Schedule extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return !(nextState.filter === this.state.filter && nextState.events === this.state.events);
+        return !(nextState.filter === this.state.filter && nextState.events === this.state.events
+            && nextState.loadingEvents === this.state.loadingEvents);
     }
 
     render() {
