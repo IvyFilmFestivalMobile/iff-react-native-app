@@ -59,6 +59,7 @@ class EventDetails extends React.Component {
         this.getDurationStrings = this.getDurationStrings.bind(this);
         this.openNativeDirectionsIntent = this.openNativeDirectionsIntent.bind(this);
         this.toggleSaved = this.toggleSaved.bind(this);
+        this.goToEventbriteLink = this.goToEventbriteLink.bind(this);
     }
 
     static navigationOptions = ({navigation}) => {
@@ -68,6 +69,9 @@ class EventDetails extends React.Component {
             headerTintColor: colors.header_color,
             headerRight: (
                 <MaterialHeaderButtons>
+                    <Button title="Go to Eventbrite link" iconSource="MaterialCommunityIcons" iconName="eventbrite"
+                            color={colors.header_color}
+                            onPress={() => navigation.state.params.goToEventbriteLink()}/>
                     <Button title="Save Event"
                             iconName={navigation.state.params.saved ? "bookmark" : "bookmark-border"}
                             color={colors.header_color}
@@ -116,10 +120,15 @@ class EventDetails extends React.Component {
         });
     }
 
+    goToEventbriteLink() {
+        Linking.openURL(this.props.navigation.state.params.event.url);
+    }
+
     componentWillMount() {
         // Set navigation parameters for use in header
         this.props.navigation.setParams({
             toggleSaved: this.toggleSaved,
+            goToEventbriteLink: this.goToEventbriteLink
         });
     }
 
