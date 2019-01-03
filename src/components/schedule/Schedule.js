@@ -24,7 +24,7 @@ class Schedule extends React.Component {
             .then((storedSavedEvents) => this.setState({savedEvents: storedSavedEvents || []}));
         //Saved events still empty? till render. also retrieve here or in componentWillMount?
 
-        this.getEvents = this.getEvents.bind(this);
+        this.fetchEvents = this.fetchEvents.bind(this);
         this.applyEventsFilter = this.applyEventsFilter.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.dialog = React.createRef();
@@ -51,19 +51,19 @@ class Schedule extends React.Component {
         this.dialog.current.showDialog();
     }
 
-    getEvents = async () => {
+    fetchEvents = async () => {
         const events = [];
         this.setState({loadingEvents: true});
 
-        try {
-            const apiCall = await fetch(`https://www.eventbriteapi.com/v3/organizations/${IFF_ORG_ID}/events/?expand=venue`, {
-                headers: new Headers({
-                    'Authorization': 'Bearer ' + EVENTBRITE_API_KEY,
-                    'Content-Type': 'application/json'
-                })
-            });
-            const eventData = await apiCall.json();
+        const apiCall = await fetch(`https://www.eventbriteapi.com/v3/organizations/${IFF_ORG_ID}/events/?expand=venue`, {
+            headers: new Headers({
+                'Authorization': 'Bearer ' + EVENTBRITE_API_KEY,
+                'Content-Type': 'application/json'
+            })
+        });
 
+        if (apiCall.ok) {
+            const eventData = await apiCall.json();
             let currSavedEvents = this.state.savedEvents;
             if (typeof eventData !== 'undefined') {
                 eventData.events.forEach(function (element) {
@@ -94,10 +94,9 @@ class Schedule extends React.Component {
                     loadingEvents: false
                 });
             }
-        } catch (error) {
+        } else {
             console.log('Error parsing and retrieving event data');
             this.setState({loadingEvents: false});
-            throw error;
         }
     };
 
@@ -167,10 +166,10 @@ class Schedule extends React.Component {
     }
 
     async componentDidMount() {
-        await this.getEvents();
         this.props.navigation.setParams({
             openFilterDialog: this.openFilterDialog
         });
+        await this.fetchEvents();
     }
 
     async componentWillUnmount() {
@@ -202,7 +201,7 @@ class Schedule extends React.Component {
             <ScrollView contentContainerStyle={styles.scrollContainer} refreshControl={
                 <RefreshControl
                     refreshing={this.state.loadingEvents}
-                    onRefresh={this.getEvents}
+                    onRefresh={this.fetchEvents}
                 />
             }>
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
