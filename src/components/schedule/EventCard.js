@@ -74,7 +74,6 @@ class EventCard extends React.Component {
                     {/*<Paragraph>{this.shortenDescription(this.props.description)}</Paragraph>*/}
                 </Card.Content>
                 <Card.Actions style={styles.actions}>
-                    <IconButton icon={'event'}/>
                     <IconButton icon={this.state.saved ? 'bookmark' : 'bookmark-border'}
                                 onPress={() => this.toggleSavedState()}/>
                     <IconButton icon={'share'} onPress={this.shareEvent}/>
