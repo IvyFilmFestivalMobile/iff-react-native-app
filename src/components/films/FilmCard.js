@@ -2,41 +2,61 @@ import React from 'react';
 import moment from 'moment';
 import {View, ScrollView, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card, Text, IconButton, Subheading, Title} from 'react-native-paper';
-import Panel from 'react-native-panel';
+
 
 class FilmCard extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            expanded: true
+            expanded: false
         };
     }
+
+    toggleExpand = () => {  
+        this.setState({
+            expanded: !this.state.expanded
+        });
+    }
+
+    collapsible = () => {
+        if(this.state.expanded) {
+            return (
+                <View>
+                    <Text style= {{margin: 5}}>
+                        {this.props.synopsis}
+                    </Text>
+                </View>
+            );
+        } else {
+            return null;
+        }
+    }
+
     render() {
 
         return (
-                <Card>
-                    <TouchableOpacity style= {styles.cardLayout}>
+                <Card style = {{margin: 5}} onPress= {this.toggleExpand}>
+                    <TouchableOpacity onPress= {this.toggleExpand} style= {styles.cardLayout}>
                         <Card.Cover style={styles.picture} source={{uri: this.props.image_url}}/>
                         <View style={styles.filmInfo}>
-                            <View style= {{flexDirection: 'row'}}>
+                            <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <Text>
                                     {this.props.film_name}
                                 </Text>
-                                <View style= {{opacity: 0.5}}>
-                                    <Text>
+                              
+                                    <Text style = {{opacity: 0.5}}>
                                         {' '}{this.props.release_date.substring(0,4)}
                                     </Text>
-                                </View>
+                             
                             </View>
-                            <Text>Released: {this.props.release_date}</Text>
+                            <View style= {{flexDirection: 'row'}}>
+                                <Text style= {styles.details}>Released: </Text>
+                                <Text>{this.props.release_date}</Text>
+                            </View>
                         </View>
                     </TouchableOpacity>
-                    <Panel header= {''}>
-                        <Text>
-                            {this.props.synopsis}
-                        </Text>
-                    </Panel>
+                    {this.collapsible()}
                 </Card>
         );
     }
@@ -53,6 +73,9 @@ const styles = StyleSheet.create({
     },
     cardLayout: {
         flexDirection: 'row',  
+    },
+    details: {
+        color: '#ff0000'
     }
 
 });
