@@ -55,12 +55,7 @@ class Schedule extends React.Component {
         const events = [];
         this.setState({loadingEvents: true});
 
-        const apiCall = await fetch(`https://www.eventbriteapi.com/v3/organizations/${IFF_ORG_ID}/events/?expand=venue`, {
-            headers: new Headers({
-                'Authorization': 'Bearer ' + EVENTBRITE_API_KEY,
-                'Content-Type': 'application/json'
-            })
-        });
+        const apiCall = await fetch("https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod");
 
         if (apiCall.ok) {
             const eventData = await apiCall.json();
