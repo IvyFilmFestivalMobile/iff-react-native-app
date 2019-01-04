@@ -1,6 +1,6 @@
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
-import Info from './src/components/Info';
+import Info from './src/components/info/Info';
 import Schedule from './src/components/schedule/Schedule';
 import EventDetails from './src/components/schedule/EventDetails';
 import Films from './src/components/films/Films';
