@@ -11,6 +11,8 @@
     "moment": "^2.23.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "react-native-elements": "^0.19.1",
+    "react-native-fullwidth-image": "^0.1.2",
     "react-native-htmlview": "^0.13.0",
     "react-native-panel": "^1.0.4",
     "react-native-paper": "^2.4.0",
