@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, Keyboard, StyleSheet} from 'react-native';
+import {Text, ScrollView, Keyboard, StyleSheet} from 'react-native';
 import {Appbar} from "react-native-paper";
 import {FILMS, MOVIE_QUERY} from '../../Constants';
 import FilmCard from './FilmCard';
@@ -12,13 +12,8 @@ class Films extends React.Component {
 
         this.state = {
             films: [],
-            searching: false,
             query: '',
-            bar:<SearchBar 
-                autoFocus= {true}
-                placeholder='Type Here...' 
-                ref={search => this.search = search}
-                onCancel= {this.toggleSearch}/>,
+            searching: false,
             keyboard: false
         };    
     }
@@ -53,7 +48,16 @@ class Films extends React.Component {
             // BackHandler.addEventListener('hardwareBackPress', () => {
             //     this.toggleSearch();
             // });
-            return this.state.bar;
+            // return this.search;
+            return (<SearchBar 
+                lightTheme
+                round
+                autoFocus= {true}
+                placeholder='Type Here...' 
+                ref={search => this.search = search}
+                onChangeText= {text => this.setState({query: text})}
+                value = {this.state.query}
+                onCancel= {this.toggleSearch}/>);
         }
        else {
             return null;
@@ -93,6 +97,28 @@ class Films extends React.Component {
     getEndpoint = (title) => {
         return MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  title + "&" + MOVIE_QUERY.API_KEY;
     };
+
+    getCards = (films) => {
+        const cards = films.map((film, key) => {
+            return (
+                <FilmCard synopsis={film.overview} 
+                image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
+                film_name = {film.title}
+                release_date = {film.release_date}
+                key = {key}/>
+            )
+        });
+        if(cards.length > 0) {
+            return cards;
+        }
+        else {
+            // Todo: style this text
+            return <Text style= {{margin: 5}}>No result was found</Text>;
+        }
+
+
+    };
+
     componentDidMount() {
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
 
@@ -120,19 +146,13 @@ class Films extends React.Component {
     render() {
         
         
-        const { films } = this.state;
-        const cards = films.map((film, key) => {
-            return (
-                <FilmCard synopsis={film.overview} 
-                image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
-                film_name = {film.title}
-                release_date = {film.release_date}
-                key = {key}/>
-            )
+        const { films, query } = this.state;
+        const newFilms = films.filter(item => {
+            const data = item.title.toUpperCase();
+            return data.indexOf(query.toUpperCase()) > -1;
         });
-
         return(
-        <ScrollView>{this.showSearchBar()}{cards}</ScrollView>  
+        <ScrollView>{this.showSearchBar()}{this.getCards(newFilms)}</ScrollView>  
         );      
     }
 }
