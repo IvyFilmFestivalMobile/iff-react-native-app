@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, Keyboard, StyleSheet} from 'react-native';
 import {Appbar} from "react-native-paper";
 import {FILMS, MOVIE_QUERY} from '../../Constants';
 import FilmCard from './FilmCard';
@@ -13,6 +13,13 @@ class Films extends React.Component {
         this.state = {
             films: [],
             searching: false,
+            query: '',
+            bar:<SearchBar 
+                autoFocus= {true}
+                placeholder='Type Here...' 
+                ref={search => this.search = search}
+                onCancel= {this.toggleSearch}/>,
+            keyboard: false
         };    
     }
    
@@ -20,8 +27,6 @@ class Films extends React.Component {
         this.setState({
             searching: !this.state.searching
         });
-        console.log(this.state.searching);
-        // this.state.searching ? this.searchBar.show() : this.searchBar.hide();
     }
     
     static navigationOptions = ({navigation}) => {
@@ -36,18 +41,25 @@ class Films extends React.Component {
         });
     };
     
-
-    searchmovies = () => {
-        this.setState({loading: true});
+    keyboardDidHide = () => {
+        if(this.state.searching) {
+            this.toggleSearch();
+        }        
     };
 
     showSearchBar = () => {
+        
         if(this.state.searching) {
-            return <SearchBar noIcon placeholder='Type Here...' ref={(ref) => this.searchBar = ref}/>;
+            // BackHandler.addEventListener('hardwareBackPress', () => {
+            //     this.toggleSearch();
+            // });
+            return this.state.bar;
         }
-        else {
+       else {
             return null;
         }
+           
+        
     }
     // async componentDidMount() {
         
@@ -82,7 +94,8 @@ class Films extends React.Component {
         return MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  title + "&" + MOVIE_QUERY.API_KEY;
     };
     componentDidMount() {
-    
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+
         Promise.all(FILMS.map(film => fetch(this.getEndpoint(film))
         .then(res => res.json())
         .then(filmData => {
@@ -94,15 +107,19 @@ class Films extends React.Component {
             handle: this.toggleSearch,
 
         });
+        
 
         // fetch("https://api.themoviedb.org/3/movie/13?api_key=151dfa1b4c6a83a02970c0c6612615b3")
         // .then(info => info.json())
         // .then(data => console.log(data));
     }
+    componentWillUnmount() {
+        this.keyboardDidHideListener.remove();
+    }
 
     render() {
         
-
+        
         const { films } = this.state;
         const cards = films.map((film, key) => {
             return (
