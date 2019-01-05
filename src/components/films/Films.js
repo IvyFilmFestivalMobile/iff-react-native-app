@@ -3,6 +3,8 @@ import {ScrollView, StyleSheet} from 'react-native';
 import {Appbar} from "react-native-paper";
 import {FILMS, MOVIE_QUERY} from '../../Constants';
 import FilmCard from './FilmCard';
+import { SearchBar } from 'react-native-elements';
+
 
 class Films extends React.Component {
     constructor(props) {
@@ -10,19 +12,25 @@ class Films extends React.Component {
 
         this.state = {
             films: [],
-            loading: true,
+            searching: false,
         };    
     }
    
-    
+    toggleSearch = () => {  
+        this.setState({
+            searching: !this.state.searching
+        });
+        console.log(this.state.searching);
+        // this.state.searching ? this.searchBar.show() : this.searchBar.hide();
+    }
     
     static navigationOptions = ({navigation}) => {
+        const {params = {}} = navigation.state;
         return ({
             header: (
                 <Appbar.Header style={styles.header}>
                     <Appbar.Content title={'Films'} color={colors.header_color}/>
-                    <Appbar.Action icon={'search'} onPress= {this.searchMovies}
-                     color={colors.header_color}/>
+                    <Appbar.Action icon={'search'} onPress= {params.handle}/> 
                     
                 </Appbar.Header>),
         });
@@ -33,6 +41,14 @@ class Films extends React.Component {
         this.setState({loading: true});
     };
 
+    showSearchBar = () => {
+        if(this.state.searching) {
+            return <SearchBar noIcon placeholder='Type Here...' ref={(ref) => this.searchBar = ref}/>;
+        }
+        else {
+            return null;
+        }
+    }
     // async componentDidMount() {
         
     //     try {
@@ -74,6 +90,11 @@ class Films extends React.Component {
                 films: [...prevState.films, filmData.results[0]]    
         }))})));
 
+        this.props.navigation.setParams({
+            handle: this.toggleSearch,
+
+        });
+
         // fetch("https://api.themoviedb.org/3/movie/13?api_key=151dfa1b4c6a83a02970c0c6612615b3")
         // .then(info => info.json())
         // .then(data => console.log(data));
@@ -81,7 +102,8 @@ class Films extends React.Component {
 
     render() {
         
-        const { films, loading } = this.state;
+
+        const { films } = this.state;
         const cards = films.map((film, key) => {
             return (
                 <FilmCard synopsis={film.overview} 
@@ -93,7 +115,7 @@ class Films extends React.Component {
         });
 
         return(
-            <ScrollView>{cards}</ScrollView>  
+        <ScrollView>{this.showSearchBar()}{cards}</ScrollView>  
         );      
     }
 }
