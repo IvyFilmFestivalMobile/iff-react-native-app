@@ -1,8 +1,6 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import FullWidthImage from 'react-native-fullwidth-image'
-import LicensesModal from './LicensesModal';
-import PrivacyPolicyModal from "./PrivacyPolicyModal";
+import {Linking, ScrollView, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import FullWidthImage from 'react-native-fullwidth-image';
 import {Paragraph} from "react-native-paper";
 
 const styles = StyleSheet.create({
@@ -41,24 +39,16 @@ class About extends React.PureComponent {
             licensesModalVisible: false
         };
 
-        this.togglePrivacyPolicyModal = this.togglePrivacyPolicyModal.bind(this);
-        this.toggleLicensesModal = this.toggleLicensesModal.bind(this);
+        this.openPrivacyPolicy = this.openPrivacyPolicy.bind(this);
+        this.openLicenses = this.openLicenses.bind(this);
     }
 
-    togglePrivacyPolicyModal() {
-        this.setState(currState => {
-            return ({
-                privacyPolicyModalVisible: !currState.privacyPolicyModalVisible
-            });
-        });
+    openPrivacyPolicy() {
+        Linking.openURL('https://ivyfilmfestivalmobile.github.io/iff-backend/privacy_policy.html');
     }
 
-    toggleLicensesModal() {
-        this.setState(currState => {
-            return ({
-                licensesModalVisible: !currState.licensesModalVisible
-            });
-        });
+    openLicenses() {
+
     }
 
     render() {
@@ -75,18 +65,14 @@ class About extends React.PureComponent {
                         students from domestic and foreign universities a venue to exhibit their work.
                     </Paragraph>
 
-                    <TouchableHighlight onPress={this.togglePrivacyPolicyModal} style={styles.linkContent}>
+                    <TouchableHighlight onPress={this.openPrivacyPolicy} style={styles.linkContent}>
                         <Text style={styles.link}>Privacy Policy</Text>
                     </TouchableHighlight>
 
-                    <TouchableHighlight onPress={this.toggleLicensesModal} style={styles.linkContent}>
+                    <TouchableHighlight onPress={this.openLicenses} style={styles.linkContent}>
                         <Text style={styles.link}>Open Source Licenses</Text>
                     </TouchableHighlight>
                 </View>
-
-                <PrivacyPolicyModal visible={this.state.privacyPolicyModalVisible}
-                                    toggle={this.togglePrivacyPolicyModal}/>
-                <LicensesModal visible={this.state.licensesModalVisible} toggle={this.toggleLicensesModal}/>
             </ScrollView>
         );
     }
