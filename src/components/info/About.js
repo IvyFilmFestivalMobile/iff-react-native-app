@@ -38,9 +38,10 @@ class About extends React.PureComponent {
             privacyPolicyModalVisible: false,
             licensesModalVisible: false
         };
+    }
 
-        this.openPrivacyPolicy = this.openPrivacyPolicy.bind(this);
-        this.openLicenses = this.openLicenses.bind(this);
+    openWebsite() {
+        Linking.openURL('https://ivyfilmfestival.org');
     }
 
     openPrivacyPolicy() {
@@ -64,6 +65,10 @@ class About extends React.PureComponent {
                         Ivy Film Festival (IFF) is the largest student-run film festival in the world and offers
                         students from domestic and foreign universities a venue to exhibit their work.
                     </Paragraph>
+
+                    <TouchableHighlight onPress={this.openWebsite} style={styles.linkContent}>
+                        <Text style={styles.link}>Website</Text>
+                    </TouchableHighlight>
 
                     <TouchableHighlight onPress={this.openPrivacyPolicy} style={styles.linkContent}>
                         <Text style={styles.link}>Privacy Policy</Text>
