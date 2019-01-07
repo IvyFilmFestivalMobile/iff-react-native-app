@@ -3,7 +3,7 @@ import moment from 'moment';
 import {Share, StyleSheet} from 'react-native';
 import {Card, IconButton, Subheading, Title} from 'react-native-paper';
 
-class EventCard extends React.Component {
+class EventCard extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -71,7 +71,6 @@ class EventCard extends React.Component {
                     <Title style={styles.title}>{this.props.event.name}</Title>
                     <Subheading>{this.getDurationStrings(this.props.event.start, this.props.event.end)[0]}</Subheading>
                     <Subheading>{this.getDurationStrings(this.props.event.start, this.props.event.end)[1]}</Subheading>
-                    {/*<Paragraph>{this.shortenDescription(this.props.description)}</Paragraph>*/}
                 </Card.Content>
                 <Card.Actions style={styles.actions}>
                     <IconButton icon={this.state.saved ? 'bookmark' : 'bookmark-border'}

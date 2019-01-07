@@ -1,9 +1,8 @@
 import React from 'react';
-import {RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
+import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import EventStorage from "./EventStorage";
-import {EVENTBRITE_API_KEY, IFF_ORG_ID} from '../../Constants';
 import {Appbar, Text} from "react-native-paper";
 
 class Schedule extends React.Component {
@@ -160,12 +159,11 @@ class Schedule extends React.Component {
         EventStorage.storeData('savedEvents', this.state.savedEvents);
     }
 
-    async componentDidMount() {
-        this.props.navigation.setParams({
-            openFilterDialog: this.openFilterDialog
-        });
-        await this.fetchEvents();
-    }
+    listEmptyText = (
+        <View style={styles.loadingView}>
+            <Text style={styles.loadingText}>No events to display</Text>
+        </View>
+    );
 
     async componentWillUnmount() {
         await EventStorage.storeData('savedEvents', this.state.savedEvents);
@@ -176,32 +174,38 @@ class Schedule extends React.Component {
             && nextState.loadingEvents === this.state.loadingEvents);
     }
 
-    render() {
-        const EventCards = (typeof this.state.filteredEvents !== 'undefined') && this.state.filteredEvents.length ?
-            this.state.filteredEvents.map((event, eventKey) => {
-                return (
-                    <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
-                               removeSavedEvent={this.removeSavedEvent} key={event.id}/>
-                );
-            }) :
-            this.state.loadingEvents ?
-                <View style={styles.loadingView}>
-                    <Text style={styles.loadingText}>Loading events...</Text>
-                </View> :
-                <View style={styles.loadingView}>
-                    <Text style={styles.loadingText}>No events to display</Text>
-                </View>;
+    async componentDidMount() { //or WillMount?
+        this.props.navigation.setParams({
+            openFilterDialog: this.openFilterDialog
+        });
+        await this.fetchEvents();
+    }
 
+    renderEventCard(event) {
         return (
-            <ScrollView contentContainerStyle={styles.scrollContainer} refreshControl={
-                <RefreshControl
-                    refreshing={this.state.loadingEvents}
-                    onRefresh={this.fetchEvents}
+            <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
+                       removeSavedEvent={this.removeSavedEvent} key={event.id.toString()}/>
+        );
+    }
+
+    render() {
+        return (
+            <View>
+                <FlatList
+                    contentContainerStyle={styles.scrollContainer}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.loadingEvents}
+                            onRefresh={this.fetchEvents}
+                        />}
+                    data={this.state.filteredEvents}
+                    renderItem={({item}) => this.renderEventCard(item)}
+                    keyExtractor={(event) => event.id.toString()}
+                    ListEmptyComponent={this.listEmptyText}
                 />
-            }>
+
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
-                {EventCards}
-            </ScrollView>
+            </View>
         );
     }
 }
