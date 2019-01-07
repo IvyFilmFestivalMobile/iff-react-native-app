@@ -3,7 +3,7 @@ import {View} from 'react-native';
 
 import {Button, Dialog, Paragraph, Portal, RadioButton, TouchableRipple} from "react-native-paper";
 
-class ScheduleFilterDialog extends React.Component {
+class ScheduleFilterDialog extends React.PureComponent {
 
     FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
 
@@ -35,12 +35,8 @@ class ScheduleFilterDialog extends React.Component {
     }
 
     submitFilterChange() {
-        this.props.setFilter(this.state.filter);
         this.hideDialog();
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return !(nextState.filter === this.state.filter && nextState.visible === this.state.visible);
+        this.props.setFilter(this.state.filter);
     }
 
     render() {
