@@ -1,7 +1,9 @@
 import React from 'react';
-import moment from 'moment';
+import moment from "moment";
+import "moment-timezone";
 import {Share, StyleSheet} from 'react-native';
 import {Card, IconButton, Subheading, Title} from 'react-native-paper';
+import {connect} from 'react-redux';
 
 class EventCard extends React.PureComponent {
     constructor(props) {
@@ -16,9 +18,9 @@ class EventCard extends React.PureComponent {
         this.shareEvent = this.shareEvent.bind(this);
     }
 
-    getDurationStrings(startTime, endTime) {
-        const localStartTime = moment(startTime);
-        const localEndTime = moment(endTime);
+    getDurationStrings(startTime, endTime) { //TODO: called twice maybe render components here to return instead
+        const localStartTime = this.props.isEasternTime ? moment(startTime).tz("America/New_York") : moment(startTime);
+        const localEndTime = this.props.isEasternTime ? moment(endTime).tz("America/New_York") : moment(endTime);
 
         const dateDurationStr = localStartTime.format("dddd, MMMM DD, YYYY");
         const timeDurationStr = localStartTime.format("LT") + " - " + localEndTime.format("LT");
@@ -99,4 +101,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default EventCard;
+const mapStateToProps = state => {
+    return {isEasternTime: state.isEasternTime};
+};
+
+export default connect(mapStateToProps)(EventCard);

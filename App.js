@@ -1,5 +1,6 @@
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
+import {Provider as StoreProvider} from 'react-redux';
 import Info from './src/components/info/Info';
 import Schedule from './src/components/schedule/Schedule';
 import EventDetails from './src/components/schedule/EventDetails';
@@ -8,6 +9,7 @@ import {createAppContainer, createStackNavigator} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import FATabBarIcon from "./src/components/shared/FATabBarIcon";
 import MaterialTabBarIcon from "./src/components/shared/MaterialTabBarIcon";
+import {store} from "./src/redux/store";
 
 const InfoNavigator = createStackNavigator(
     {
@@ -88,9 +90,11 @@ const AppContainer = createAppContainer(AppNavigator);
 export default class App extends React.Component {
   render() {
     return (
-        <PaperProvider>
-          <AppContainer />
-        </PaperProvider>
+        <StoreProvider store={store}>
+            <PaperProvider>
+                <AppContainer/>
+            </PaperProvider>
+        </StoreProvider>
     );
   }
 }

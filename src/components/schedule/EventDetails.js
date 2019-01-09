@@ -6,6 +6,7 @@ import moment from 'moment';
 import {MaterialIcons} from '@expo/vector-icons';
 import HTMLView from "react-native-htmlview";
 import {Button, MaterialHeaderButtons} from '../shared/MaterialHeader'
+import {connect} from "react-redux";
 
 const colors = {
     header_background_color: '#ee5956',
@@ -83,9 +84,9 @@ class EventDetails extends React.Component {
         });
     };
 
-    getDurationStrings(startTime, endTime) {
-        const localStartTime = moment(startTime);
-        const localEndTime = moment(endTime);
+    getDurationStrings(startTime, endTime) { //TODO: Duplicate code maybe utilities class for events?
+        const localStartTime = this.props.isEasternTime ? moment(startTime).tz("America/New_York") : moment(startTime);
+        const localEndTime = this.props.isEasternTime ? moment(endTime).tz("America/New_York") : moment(endTime);
 
         const dateDurationStr = localStartTime.format("dddd, MMMM DD, YYYY");
         const timeDurationStr = localStartTime.format("LT") + " - " + localEndTime.format("LT");
@@ -205,5 +206,8 @@ class EventDetails extends React.Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {isEasternTime: state.isEasternTime};
+};
 
-export default EventDetails;
+export default connect(mapStateToProps)(EventDetails);
