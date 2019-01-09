@@ -105,7 +105,6 @@ class Schedule extends React.Component {
         }
     }
 
-    // TODO: very slow to update scrollview due to long event list. mb bring loading higher and either display spinner or scrollview
     async setFilter(newFilter) {
         await this.setState(currState => {
             return ({
@@ -115,13 +114,11 @@ class Schedule extends React.Component {
         });
     };
 
-    //TODO: Consider moving event storage funcs to different class
     addSavedEvent(eventId) {
         this.setState(currState => {
             currState.savedEvents.push(eventId);
 
             // Negate saved property of specified event
-            // TODO: possibly replace savedEvents array by storing events with saved=true
             currState.filteredEvents.find(event => event.id === eventId).saved =
                 !currState.filteredEvents.find(event => event.id === eventId).saved;
 
