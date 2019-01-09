@@ -1,6 +1,7 @@
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {Provider as StoreProvider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react'
 import Info from './src/components/info/Info';
 import Schedule from './src/components/schedule/Schedule';
 import EventDetails from './src/components/schedule/EventDetails';
@@ -9,7 +10,7 @@ import {createAppContainer, createStackNavigator} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import FATabBarIcon from "./src/components/shared/FATabBarIcon";
 import MaterialTabBarIcon from "./src/components/shared/MaterialTabBarIcon";
-import {store} from "./src/redux/store";
+import {persistor, store} from "./src/redux/store";
 
 const InfoNavigator = createStackNavigator(
     {
@@ -87,13 +88,16 @@ const AppNavigator = createMaterialBottomTabNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
+//TODO: Return AppLoading if PersistGate incomplete
 export default class App extends React.Component {
   render() {
     return (
         <StoreProvider store={store}>
-            <PaperProvider>
-                <AppContainer/>
-            </PaperProvider>
+            <PersistGate persistor={persistor}>
+                <PaperProvider>
+                    <AppContainer/>
+                </PaperProvider>
+            </PersistGate>
         </StoreProvider>
     );
   }
