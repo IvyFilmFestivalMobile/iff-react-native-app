@@ -38,9 +38,15 @@ const styles = StyleSheet.create({
 });
 
 const InfoTabs = createMaterialTopTabNavigator({
-    Festival: Festival,
-    About: About,
-    Settings: Settings,
+    Festival: {
+        screen: Festival
+    },
+    About: {
+        screen: About
+    },
+    Settings: {
+        screen: Settings
+    },
 }, {
     tabBarOptions: {
         style: {
