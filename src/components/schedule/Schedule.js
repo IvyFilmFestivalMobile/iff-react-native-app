@@ -2,7 +2,7 @@ import React from 'react';
 import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
-import EventStorage from "./EventStorage";
+import Storage from "../../utils/Storage";
 import {Appbar, Text} from "react-native-paper";
 
 class Schedule extends React.Component {
@@ -19,7 +19,7 @@ class Schedule extends React.Component {
             loadingEvents: false
         };
 
-        EventStorage.retrieveData('savedEvents')
+        Storage.retrieveData('savedEvents')
             .then((storedSavedEvents) => this.setState({savedEvents: storedSavedEvents || []}));
         //Saved events still empty? till render. also retrieve here or in componentWillMount?
 
@@ -156,7 +156,7 @@ class Schedule extends React.Component {
     }
 
     updateSavedEventsStorage() {
-        EventStorage.storeData('savedEvents', this.state.savedEvents);
+        Storage.storeData('savedEvents', this.state.savedEvents);
     }
 
     listEmptyText = (
@@ -166,7 +166,7 @@ class Schedule extends React.Component {
     );
 
     async componentWillUnmount() {
-        await EventStorage.storeData('savedEvents', this.state.savedEvents);
+        await Storage.storeData('savedEvents', this.state.savedEvents);
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {

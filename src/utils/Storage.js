@@ -1,13 +1,13 @@
 import React from 'react';
 import {AsyncStorage} from 'react-native';
 
-class EventStorage {
+class Storage {
 
     static storePrefix = '@IvyFilmFestivalStore:';
 
     static storeData = async (key, value) => {
         try {
-            await AsyncStorage.setItem(EventStorage.storePrefix + key, JSON.stringify(value));
+            await AsyncStorage.setItem(Storage.storePrefix + key, JSON.stringify(value));
         } catch (error) {
             // Error saving data
             console.log('Error saving event data');
@@ -16,7 +16,7 @@ class EventStorage {
 
     static retrieveData = async (key) => {
         try {
-            const value = await AsyncStorage.getItem(EventStorage.storePrefix + key);
+            const value = await AsyncStorage.getItem(Storage.storePrefix + key);
             if (value !== null) {
                 return JSON.parse(value);
             }
@@ -27,4 +27,4 @@ class EventStorage {
     };
 }
 
-export default EventStorage;
+export default Storage;
