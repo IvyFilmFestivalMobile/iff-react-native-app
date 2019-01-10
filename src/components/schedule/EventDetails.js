@@ -1,12 +1,12 @@
 import React from 'react';
-import {Image, Platform, ScrollView, StyleSheet, View} from 'react-native';
-import {Linking, MapView} from 'expo';
+import {Image, Linking, Platform, ScrollView, StyleSheet, View} from 'react-native';
 import {Divider, FAB, Headline, Paragraph, Subheading, Text, Title} from "react-native-paper";
+import MapView from 'react-native-maps';
 import moment from 'moment';
-import {MaterialIcons} from '@expo/vector-icons';
 import HTMLView from "react-native-htmlview";
 import {Button, MaterialHeaderButtons} from '../shared/MaterialHeader'
 import {connect} from "react-redux";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const colors = {
     header_background_color: '#ee5956',
