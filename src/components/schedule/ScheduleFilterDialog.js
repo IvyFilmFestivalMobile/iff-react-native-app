@@ -2,6 +2,8 @@ import React from 'react';
 import {View} from 'react-native';
 import EventFilterEnum from "./EventFilterEnum";
 import {Button, Dialog, Paragraph, Portal, RadioButton, TouchableRipple} from "react-native-paper";
+import {setEventFilter} from "../../redux/actions";
+import {connect} from "react-redux";
 
 class ScheduleFilterDialog extends React.PureComponent {
 
@@ -10,12 +12,11 @@ class ScheduleFilterDialog extends React.PureComponent {
 
         this.state = {
             visible: false,
-            filter: this.props.currFilter
+            filter: this.props.eventFilter
         };
 
         this.showDialog = this.showDialog.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
-        this.onDismissDialog = this.onDismissDialog.bind(this);
         this.submitFilterChange = this.submitFilterChange.bind(this);
     }
 
@@ -27,14 +28,9 @@ class ScheduleFilterDialog extends React.PureComponent {
         visible: false,
     });
 
-    onDismissDialog() {
-        this.setState({filter: this.props.currFilter});
-        this.hideDialog();
-    }
-
     submitFilterChange() {
         this.hideDialog();
-        this.props.setFilter(this.state.filter);
+        this.props.setEventFilter(this.state.filter);
     }
 
     render() {
@@ -42,7 +38,7 @@ class ScheduleFilterDialog extends React.PureComponent {
             <Portal>
                 <Dialog
                     visible={this.state.visible}
-                    onDismiss={this.onDismissDialog}>
+                    onDismiss={this.hideDialog}>
                     <Dialog.Title>Choose Event Filter</Dialog.Title>
                     <Dialog.Content>
                         <RadioButton.Group
@@ -91,4 +87,8 @@ const styles = {
     },
 };
 
-export default ScheduleFilterDialog;
+const mapStateToProps = state => {
+    return {eventFilter: state.eventFilter};
+};
+
+export default connect(mapStateToProps, {setEventFilter}, null, {forwardRef: true})(ScheduleFilterDialog);
