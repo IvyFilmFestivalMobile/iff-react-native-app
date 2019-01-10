@@ -139,11 +139,16 @@ class Schedule extends React.Component {
         Storage.storeData('savedEvents', this.state.savedEvents);
     }
 
-    listEmptyText = (
-        <View style={styles.loadingView}>
-            <Text style={styles.loadingText}>No events to display</Text>
-        </View>
-    );
+    // TODO: is spinner enough to indicate loading?
+    listEmptyText = () => {
+        return this.state.loadingEvents
+            ? (<View style={styles.loadingView}>
+                <Text style={styles.loadingText}>Loading events...</Text>
+            </View>)
+            : (<View style={styles.loadingView}>
+                <Text style={styles.loadingText}>No events to display</Text>
+            </View>);
+    };
 
     async componentWillUnmount() {
         await Storage.storeData('savedEvents', this.state.savedEvents);
