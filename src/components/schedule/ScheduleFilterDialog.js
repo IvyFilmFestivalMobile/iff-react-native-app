@@ -17,6 +17,7 @@ class ScheduleFilterDialog extends React.PureComponent {
 
         this.showDialog = this.showDialog.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
+        this.dismissDialog = this.dismissDialog.bind(this);
         this.submitFilterChange = this.submitFilterChange.bind(this);
     }
 
@@ -28,9 +29,15 @@ class ScheduleFilterDialog extends React.PureComponent {
         visible: false,
     });
 
+    dismissDialog() {
+        this.setState({filter: this.props.eventFilter});
+        this.hideDialog();
+    }
+
     submitFilterChange() {
         this.hideDialog();
         this.props.setEventFilter(this.state.filter);
+        //TODO: Consider removing filter from state as it's redundant with store
     }
 
     render() {
@@ -38,7 +45,7 @@ class ScheduleFilterDialog extends React.PureComponent {
             <Portal>
                 <Dialog
                     visible={this.state.visible}
-                    onDismiss={this.hideDialog}>
+                    onDismiss={this.dismissDialog}>
                     <Dialog.Title>Choose Event Filter</Dialog.Title>
                     <Dialog.Content>
                         <RadioButton.Group
