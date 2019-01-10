@@ -4,6 +4,7 @@ import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import Storage from "../../utils/Storage";
 import {Appbar, FAB, Text} from "react-native-paper";
+import EventFilterEnum from "./EventFilterEnum";
 
 class Schedule extends React.Component {
 
@@ -12,7 +13,7 @@ class Schedule extends React.Component {
 
         // Initial state
         this.state = {
-            filter: this.FilterEnum.UPCOMING,
+            filter: EventFilterEnum.UPCOMING,
             events: [],
             filteredEvents: [],
             savedEvents: [],
@@ -32,8 +33,6 @@ class Schedule extends React.Component {
         this.removeSavedEvent = this.removeSavedEvent.bind(this);
         this.updateSavedEventsStorage = this.updateSavedEventsStorage.bind(this);
     }
-
-    FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
 
     //Maybe just change to title instead of full header element
     static navigationOptions = ({navigation}) => {
@@ -95,11 +94,11 @@ class Schedule extends React.Component {
 
     applyEventsFilter(events, filter) {
         switch (filter) {
-            case this.FilterEnum.ALL:
+            case EventFilterEnum.ALL:
                 return events;
-            case this.FilterEnum.UPCOMING:
+            case EventFilterEnum.UPCOMING:
                 return events.filter(event => event.end > Date.now);
-            case this.FilterEnum.SAVED:
+            case EventFilterEnum.SAVED:
                 return events.filter(event => event.saved);
         }
     }

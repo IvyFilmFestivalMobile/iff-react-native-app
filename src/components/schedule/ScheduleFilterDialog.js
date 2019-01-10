@@ -1,11 +1,9 @@
 import React from 'react';
 import {View} from 'react-native';
-
+import EventFilterEnum from "./EventFilterEnum";
 import {Button, Dialog, Paragraph, Portal, RadioButton, TouchableRipple} from "react-native-paper";
 
 class ScheduleFilterDialog extends React.PureComponent {
-
-    FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
 
     constructor(props) {
         super(props);
@@ -51,22 +49,22 @@ class ScheduleFilterDialog extends React.PureComponent {
                             onValueChange={value => this.setState({filter: value})}
                             value={this.state.filter}
                         >
-                            <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.ALL})}>
+                            <TouchableRipple onPress={() => this.setState({filter: EventFilterEnum.ALL})}>
                                 <View style={styles.row}>
                                     <Paragraph>All</Paragraph>
-                                    <RadioButton value={this.FilterEnum.ALL}/>
+                                    <RadioButton value={EventFilterEnum.ALL}/>
                                 </View>
                             </TouchableRipple>
-                            <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.UPCOMING})}>
+                            <TouchableRipple onPress={() => this.setState({filter: EventFilterEnum.UPCOMING})}>
                                 <View style={styles.row}>
                                     <Paragraph>Upcoming</Paragraph>
-                                    <RadioButton value={this.FilterEnum.UPCOMING}/>
+                                    <RadioButton value={EventFilterEnum.UPCOMING}/>
                                 </View>
                             </TouchableRipple>
-                            <TouchableRipple onPress={() => this.setState({filter: this.FilterEnum.SAVED})}>
+                            <TouchableRipple onPress={() => this.setState({filter: EventFilterEnum.SAVED})}>
                                 <View style={styles.row}>
                                     <Paragraph>Saved</Paragraph>
-                                    <RadioButton value={this.FilterEnum.SAVED}/>
+                                    <RadioButton value={EventFilterEnum.SAVED}/>
                                 </View>
                             </TouchableRipple>
                         </RadioButton.Group>
