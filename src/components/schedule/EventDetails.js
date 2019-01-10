@@ -47,6 +47,12 @@ const styles = StyleSheet.create({
     }
 });
 
+const htmlStyles = StyleSheet.create({
+    p: {
+        color: '#000000',
+    },
+});
+
 class EventDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -179,7 +185,7 @@ class EventDetails extends React.Component {
 
                 <Headline style={styles.section}>Description</Headline>
                 <Divider/>
-                <HTMLView value={event.description_html}/>
+                <HTMLView value={event.description_html} stylesheet={htmlStyles}/>
 
                 <Headline style={styles.section}>Location</Headline>
                 <Divider/>
