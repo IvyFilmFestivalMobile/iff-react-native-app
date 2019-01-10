@@ -23,7 +23,7 @@ class FilmCard extends React.Component {
         if(this.state.expanded) {
             return (
                 <View>
-                    <Text style= {{margin: 5}}>
+                    <Text style= {{margin: 8}}>
                         {this.props.synopsis}
                     </Text>
                 </View>
@@ -36,11 +36,11 @@ class FilmCard extends React.Component {
     render() {
 
         return (
-                <Card style = {{margin: 5}} onPress= {this.toggleExpand}>
+                <Card style = {{margin: 4}} onPress= {this.toggleExpand}>
                     <TouchableOpacity onPress= {this.toggleExpand} style= {styles.cardLayout}>
                         <Card.Cover style={styles.picture} source={{uri: this.props.image_url}}/>
                         <View style={styles.filmInfo}>
-                            <View style= {{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View style= {{flexDirection: 'row', justifyContent: 'space-between',  marginBottom: 5}}>
                                 <Text>
                                     {this.props.film_name}
                                 </Text>
@@ -54,6 +54,17 @@ class FilmCard extends React.Component {
                                 <Text style= {styles.details}>Released: </Text>
                                 <Text>{this.props.release_date}</Text>
                             </View>
+                            <View style= {{flexDirection: 'row'}}>
+                                <Text style= {styles.details}>Runtime: </Text>
+                                <Text>{this.props.runtime}</Text>
+                            </View>
+                            <View style= {{flexDirection: 'row'}}>
+                                <Text style= {styles.details}>Genre(s): </Text>
+                                <Text>{this.props.genres}</Text>
+                            </View>
+                            <View>
+                                <Text style= {{opacity: 0.5, marginTop: 3}}>{this.props.tagline}</Text>
+                            </View>
                         </View>
                     </TouchableOpacity>
                     {this.collapsible()}
@@ -64,12 +75,13 @@ class FilmCard extends React.Component {
 
 const styles = StyleSheet.create({
     picture: {
-        height: 100,
-        width: 100,
-        margin: 6,
+        height: 150,
+        width: 120,
+        margin: 8,
     },
     filmInfo: {
         flex: 1,  
+        margin: 6,
     },
     cardLayout: {
         flexDirection: 'row',  
