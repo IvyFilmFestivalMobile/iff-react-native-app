@@ -84,7 +84,7 @@ const AppNavigator = createMaterialBottomTabNavigator(
         initialRouteName: 'Schedule',
       activeColor: '#f0edf6',
       barStyle: { backgroundColor: '#ee5956' }
-});
+    });
 
 const AppContainer = createAppContainer(AppNavigator);
 

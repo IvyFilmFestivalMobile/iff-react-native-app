@@ -1,37 +1,4 @@
 {
-  "expo": {
-    "name": "Ivy Film Festival",
-    "slug": "ivyfilmfestival",
-    "privacy": "unlisted",
-    "sdkVersion": "31.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
-    "ios": {
-      "bundleIdentifier": "org.ivyfilmfestival.ios"
-    },
-    "android": {
-      "package": "org.ivyfilmfestival.android"
-    },
-    "version": "1.0.0",
-    "orientation": "default",
-    "icon": "./assets/iff-logo.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "description": "",
-    "githubUrl": "https://github.com/IvyFilmFestivalMobile/iff-react-native-app"
-  }
+  "name": "ivyfilmfestivalapp",
+  "displayName": "Ivy Film Festival"
 }

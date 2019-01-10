@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FontAwesome} from '@expo/vector-icons';
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const FATabBarIcon = name => ({ tintColor }) => (
     <FontAwesome
