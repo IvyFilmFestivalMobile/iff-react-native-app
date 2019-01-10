@@ -5,6 +5,7 @@ import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import Storage from "../../utils/Storage";
 import {Appbar, FAB, Text} from "react-native-paper";
 import EventFilterEnum from "./EventFilterEnum";
+import {connect} from "react-redux";
 
 class Schedule extends React.Component {
 
@@ -13,9 +14,7 @@ class Schedule extends React.Component {
 
         // Initial state
         this.state = {
-            filter: EventFilterEnum.UPCOMING,
             events: [],
-            filteredEvents: [],
             savedEvents: [],
             loadingEvents: false
         };
@@ -26,7 +25,6 @@ class Schedule extends React.Component {
 
         this.fetchEvents = this.fetchEvents.bind(this);
         this.applyEventsFilter = this.applyEventsFilter.bind(this);
-        this.setFilter = this.setFilter.bind(this);
         this.dialog = React.createRef();
         this.openFilterDialog = this.openFilterDialog.bind(this);
         this.addSavedEvent = this.addSavedEvent.bind(this);
@@ -79,10 +77,8 @@ class Schedule extends React.Component {
                     });
                 });
 
-                let currFilter = this.state.filter;
                 this.setState({
                     events: events,
-                    filteredEvents: this.applyEventsFilter(events, currFilter),
                     loadingEvents: false
                 });
             }
@@ -103,25 +99,15 @@ class Schedule extends React.Component {
         }
     }
 
-    async setFilter(newFilter) {
-        await this.setState(currState => {
-            return ({
-                filter: newFilter,
-                filteredEvents: this.applyEventsFilter(currState.events, newFilter)
-            });
-        });
-    };
-
     addSavedEvent(eventId) {
         this.setState(currState => {
             currState.savedEvents.push(eventId);
 
             // Negate saved property of specified event
-            currState.filteredEvents.find(event => event.id === eventId).saved =
-                !currState.filteredEvents.find(event => event.id === eventId).saved;
+            currState.events.find(event => event.id === eventId).saved =
+                !currState.events.find(event => event.id === eventId).saved;
 
             return {
-                filteredEvents: currState.filteredEvents,
                 savedEvents: currState.savedEvents
             };
         });
@@ -138,11 +124,10 @@ class Schedule extends React.Component {
             }
 
             // Negate saved property of specified event
-            currState.filteredEvents.find(event => event.id === eventId).saved =
-                !currState.filteredEvents.find(event => event.id === eventId).saved;
+            currState.events.find(event => event.id === eventId).saved =
+                !currState.events.find(event => event.id === eventId).saved;
 
             return {
-                filteredEvents: currState.filteredEvents,
                 savedEvents: currState.savedEvents
             };
         });
@@ -165,7 +150,7 @@ class Schedule extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return !(nextState.filter === this.state.filter && nextState.events === this.state.events
+        return !(nextProps.eventFilter === this.props.eventFilter && nextState.events === this.state.events
             && nextState.loadingEvents === this.state.loadingEvents);
     }
 
@@ -184,6 +169,7 @@ class Schedule extends React.Component {
     }
 
     render() {
+        const filteredEvents = this.applyEventsFilter(this.state.events, this.props.eventFilter);
         return (
             <View style={styles.rootContainer}>
                 <FlatList
@@ -193,7 +179,7 @@ class Schedule extends React.Component {
                             refreshing={this.state.loadingEvents}
                             onRefresh={this.fetchEvents}
                         />}
-                    data={this.state.filteredEvents}
+                    data={filteredEvents}
                     renderItem={({item}) => this.renderEventCard(item)}
                     keyExtractor={(event) => event.id.toString()}
                     ListEmptyComponent={this.listEmptyText}
@@ -206,7 +192,7 @@ class Schedule extends React.Component {
                     onPress={this.openFilterDialog}
                 />
 
-                <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
+                <ScheduleFilterDialog ref={this.dialog}/>
             </View>
         );
     }
@@ -249,4 +235,8 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Schedule;
+const mapStateToProps = state => {
+    return {eventFilter: state.eventFilter};
+};
+
+export default connect(mapStateToProps)(Schedule);
