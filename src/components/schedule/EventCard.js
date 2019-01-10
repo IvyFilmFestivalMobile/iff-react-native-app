@@ -52,12 +52,6 @@ class EventCard extends React.PureComponent {
         });
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            saved: nextProps.event.saved
-        });
-    }
-
     render() {
         return (
             <Card style={styles.card} onPress={() => {
