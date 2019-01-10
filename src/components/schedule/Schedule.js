@@ -3,7 +3,7 @@ import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import Storage from "../../utils/Storage";
-import {Appbar, Text} from "react-native-paper";
+import {Appbar, FAB, Text} from "react-native-paper";
 
 class Schedule extends React.Component {
 
@@ -35,13 +35,12 @@ class Schedule extends React.Component {
 
     FilterEnum = {ALL: 1, UPCOMING: 2, SAVED: 3};
 
+    //Maybe just change to title instead of full header element
     static navigationOptions = ({navigation}) => {
         return ({
             header: (
                 <Appbar.Header style={styles.header}>
                     <Appbar.Content title={'Schedule'} color={colors.header_color}/>
-                    <Appbar.Action icon={'filter-list'} onPress={() => navigation.state.params.openFilterDialog()}
-                                   color={colors.header_color}/>
                 </Appbar.Header>),
         });
     };
@@ -187,7 +186,7 @@ class Schedule extends React.Component {
 
     render() {
         return (
-            <View>
+            <View style={styles.rootContainer}>
                 <FlatList
                     contentContainerStyle={styles.scrollContainer}
                     refreshControl={
@@ -201,6 +200,13 @@ class Schedule extends React.Component {
                     ListEmptyComponent={this.listEmptyText}
                 />
 
+                <FAB
+                    style={styles.filterFab}
+                    icon={'filter-list'}
+                    color={colors.fab_icon_color}
+                    onPress={this.openFilterDialog}
+                />
+
                 <ScheduleFilterDialog ref={this.dialog} currFilter={this.state.filter} setFilter={this.setFilter}/>
             </View>
         );
@@ -210,7 +216,8 @@ class Schedule extends React.Component {
 const colors = {
     header_background_color: '#ee5956',
     header_color: '#ffffff',
-    spinner_color: '#0e3737'
+    spinner_color: '#0e3737',
+    fab_icon_color: '#ffffff',
 };
 
 const styles = StyleSheet.create({
@@ -219,6 +226,9 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 4,
+    },
+    rootContainer: {
+        flex: 1,
     },
     scrollContainer: {
         flexGrow: 1
@@ -230,7 +240,14 @@ const styles = StyleSheet.create({
     loadingText: {
         textAlign: 'center',
         textAlignVertical: 'center',
-    }
+    },
+    filterFab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: colors.header_background_color //TODO: rename to primary color
+    },
 });
 
 export default Schedule;
