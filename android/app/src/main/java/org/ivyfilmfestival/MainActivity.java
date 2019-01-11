@@ -1,4 +1,4 @@
-package com.ivyfilmfestivalapp;
+package org.ivyfilmfestival;
 
 import com.facebook.react.ReactActivity;
 
