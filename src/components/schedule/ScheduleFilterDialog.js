@@ -30,8 +30,10 @@ class ScheduleFilterDialog extends React.PureComponent {
     });
 
     dismissDialog() {
-        this.setState({filter: this.props.eventFilter});
-        this.hideDialog();
+        this.setState({
+            filter: this.props.eventFilter,
+            visible: false,
+        });
     }
 
     submitFilterChange() {

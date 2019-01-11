@@ -104,8 +104,8 @@ class Schedule extends React.Component {
             currState.savedEvents.push(eventId);
 
             // Negate saved property of specified event
-            currState.events.find(event => event.id === eventId).saved =
-                !currState.events.find(event => event.id === eventId).saved;
+            let eventIndex = currState.events.findIndex(event => event.id === eventId);
+            currState.events[eventIndex].saved = !currState.events[eventIndex].saved;
 
             return {
                 savedEvents: currState.savedEvents
@@ -124,8 +124,8 @@ class Schedule extends React.Component {
             }
 
             // Negate saved property of specified event
-            currState.events.find(event => event.id === eventId).saved =
-                !currState.events.find(event => event.id === eventId).saved;
+            let eventIndex = currState.events.findIndex(event => event.id === eventId);
+            currState.events[eventIndex].saved = !currState.events[eventIndex].saved; //TODO: don't directly mutate state
 
             return {
                 savedEvents: currState.savedEvents
