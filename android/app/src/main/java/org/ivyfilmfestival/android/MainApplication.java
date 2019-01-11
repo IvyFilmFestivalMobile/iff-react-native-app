@@ -1,4 +1,4 @@
-package org.ivyfilmfestival;
+package org.ivyfilmfestival.android;
 
 import android.app.Application;
 
