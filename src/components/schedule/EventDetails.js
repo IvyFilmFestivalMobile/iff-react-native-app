@@ -53,7 +53,7 @@ const htmlStyles = StyleSheet.create({
     },
 });
 
-class EventDetails extends React.Component {
+class EventDetails extends React.PureComponent {
     constructor(props) {
         super(props);
 
