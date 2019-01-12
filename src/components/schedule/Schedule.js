@@ -50,39 +50,44 @@ class Schedule extends React.Component {
         const events = [];
         this.setState({loadingEvents: true});
 
-        const apiCall = await fetch("https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod");
+        try {
+            const apiCall = await fetch("https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod");
 
-        if (apiCall.ok) {
-            const eventData = await apiCall.json();
-            let currSavedEvents = this.state.savedEvents;
-            if (typeof eventData !== 'undefined') {
-                eventData.events.forEach(function (element) {
-                    let savedEventStatus = currSavedEvents.includes(element.id);
-                    events.push({
-                        name: element.name.text,
-                        description: element.description.text,
-                        description_html: element.description.html,
-                        id: element.id,
-                        url: element.url,
-                        start: element.start.utc,
-                        end: element.end.utc,
-                        image_url: element.logo.url, //logo.original.url 8x longer
-                        location: {
-                            name: element.venue.name,
-                            latitude: element.venue.latitude,
-                            longitude: element.venue.longitude,
-                            address_display: element.venue.address.localized_multi_line_address_display
-                        },
-                        saved: savedEventStatus,
+            if (apiCall.ok) {
+                const eventData = await apiCall.json();
+                let currSavedEvents = this.state.savedEvents;
+                if (typeof eventData !== 'undefined') {
+                    eventData.events.forEach(function (element) {
+                        let savedEventStatus = currSavedEvents.includes(element.id);
+                        events.push({
+                            name: element.name.text,
+                            description: element.description.text,
+                            description_html: element.description.html,
+                            id: element.id,
+                            url: element.url,
+                            start: element.start.utc,
+                            end: element.end.utc,
+                            image_url: element.logo.url, //logo.original.url 8x longer
+                            location: {
+                                name: element.venue.name,
+                                latitude: element.venue.latitude,
+                                longitude: element.venue.longitude,
+                                address_display: element.venue.address.localized_multi_line_address_display
+                            },
+                            saved: savedEventStatus,
+                        });
                     });
-                });
 
-                this.setState({
-                    events: events,
-                    loadingEvents: false
-                });
+                    this.setState({
+                        events: events,
+                        loadingEvents: false
+                    });
+                }
+            } else {
+                console.log('API call not ok'); //Don't log error to console. TODO: Separate logging and error display
+                this.setState({loadingEvents: false});
             }
-        } else {
+        } catch (exception) {
             console.log('Error parsing and retrieving event data');
             this.setState({loadingEvents: false});
         }
