@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import EventCard from "./EventCard";
 import ScheduleFilterDialog from "./ScheduleFilterDialog";
 import Storage from "../../utils/Storage";
@@ -184,11 +184,8 @@ class Schedule extends React.Component {
             <View style={styles.rootContainer}>
                 <FlatList
                     contentContainerStyle={styles.scrollContainer}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.loadingEvents}
-                            onRefresh={this.fetchEvents}
-                        />}
+                    refreshing={this.state.loadingEvents}
+                    onRefresh={this.fetchEvents}
                     data={filteredEvents}
                     renderItem={({item}) => this.renderEventCard(item)}
                     keyExtractor={(event) => event.id.toString()}
