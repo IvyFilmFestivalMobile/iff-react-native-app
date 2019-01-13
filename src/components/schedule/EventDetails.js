@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Linking, Platform, ScrollView, StyleSheet, View} from 'react-native';
+import {Image, Linking, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 import {Divider, FAB, Headline, Paragraph, Subheading, Text, Title} from "react-native-paper";
 import MapView from 'react-native-maps';
 import moment from 'moment';
@@ -64,6 +64,7 @@ class EventDetails extends React.PureComponent {
         };
 
         this.getDurationStrings = this.getDurationStrings.bind(this);
+        this.openEventLocationIntent = this.openEventLocationIntent.bind(this);
         this.openNativeDirectionsIntent = this.openNativeDirectionsIntent.bind(this);
         this.toggleSaved = this.toggleSaved.bind(this);
         this.goToEventbriteLink = this.goToEventbriteLink.bind(this);
@@ -100,7 +101,15 @@ class EventDetails extends React.PureComponent {
         return [dateDurationStr, timeDurationStr];
     }
 
-    openNativeDirectionsIntent(location) {
+    openEventLocationIntent() {
+        const {location} = this.props.navigation.state.params.event;
+
+        const geoURL = `geo:0,0?q=${location.latitude},${location.longitude}(${encodeURI(location.name)})`;
+        Linking.openURL(geoURL);
+    }
+
+    openNativeDirectionsIntent() {
+        const {location} = this.props.navigation.state.params.event;
         const locationString = location.latitude + '%2C' + location.longitude;
 
         if (Platform.OS === "ios") {
@@ -175,13 +184,16 @@ class EventDetails extends React.PureComponent {
                     />
                     {"  " + this.getDurationStrings(event.start, event.end)[1]}
                 </Subheading>
-                <Subheading>
-                    <MaterialIcons
-                        style={{backgroundColor: 'transparent'}}
-                        name={'location-on'}
-                    />
-                    {"  " + event.location.name}
-                </Subheading>
+
+                <TouchableWithoutFeedback onPress={this.openEventLocationIntent}>
+                    <Subheading>
+                        <MaterialIcons
+                            style={{backgroundColor: 'transparent'}}
+                            name={'location-on'}
+                        />
+                        {"  " + event.location.name}
+                    </Subheading>
+                </TouchableWithoutFeedback>
 
                 <Headline style={styles.section}>Description</Headline>
                 <Divider/>
@@ -189,10 +201,14 @@ class EventDetails extends React.PureComponent {
 
                 <Headline style={styles.section}>Location</Headline>
                 <Divider/>
-                <Text>{event.location.name}</Text>
-                {event.location.address_display.map((addressLine, key) => {
-                    return (<Paragraph key={key}>{addressLine}</Paragraph>);
-                })}
+                <TouchableWithoutFeedback onPress={this.openEventLocationIntent}>
+                    <View>
+                        <Text>{event.location.name}</Text>
+                        {event.location.address_display.map((addressLine, key) => {
+                            return (<Paragraph key={key}>{addressLine}</Paragraph>);
+                        })}
+                    </View>
+                </TouchableWithoutFeedback>
                 <View style={styles.bottomSpacing}>
                     <MapView region={mapRegion} style={styles.mapView} places={[eventLocation]}>
                         <MapView.Marker
@@ -203,7 +219,7 @@ class EventDetails extends React.PureComponent {
                     <FAB
                         style={styles.fab}
                         icon="directions"
-                        onPress={() => this.openNativeDirectionsIntent(event.location)}
+                        onPress={this.openNativeDirectionsIntent}
                         color={colors.fab_icon_color}
                     />
                 </View>
