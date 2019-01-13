@@ -18,10 +18,10 @@ const styles = StyleSheet.create({
     },
     paragraph: {
         marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 25,
     },
     linkContent: {
-        marginBottom: 5,
+        marginBottom: 25,
     },
 });
 
