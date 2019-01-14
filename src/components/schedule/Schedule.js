@@ -15,21 +15,14 @@ class Schedule extends React.Component {
         // Initial state
         this.state = {
             events: [],
-            savedEvents: [],
             loadingEvents: false
         };
-
-        Storage.retrieveData('savedEvents')
-            .then((storedSavedEvents) => this.setState({savedEvents: storedSavedEvents || []}));
-        //Saved events still empty? till render. also retrieve here or in componentWillMount?
 
         this.fetchEvents = this.fetchEvents.bind(this);
         this.applyEventsFilter = this.applyEventsFilter.bind(this);
         this.dialog = React.createRef();
         this.openFilterDialog = this.openFilterDialog.bind(this);
-        this.addSavedEvent = this.addSavedEvent.bind(this);
-        this.removeSavedEvent = this.removeSavedEvent.bind(this);
-        this.updateSavedEventsStorage = this.updateSavedEventsStorage.bind(this);
+        this.toggleSavedEvent = this.toggleSavedEvent.bind(this);
     }
 
     lastEventId = "";
@@ -68,10 +61,8 @@ class Schedule extends React.Component {
                 await fetch(`https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod?lastId=${this.lastEventId}`);
             if (apiCall.ok) {
                 const eventData = await apiCall.json();
-                let currSavedEvents = this.state.savedEvents;
                 if (typeof eventData !== 'undefined') {
                     eventData.events.forEach(function (element) {
-                        let savedEventStatus = currSavedEvents.includes(element.id);
                         events.push({
                             name: element.name.text,
                             description: element.description.text,
@@ -87,7 +78,7 @@ class Schedule extends React.Component {
                                 longitude: element.venue.longitude,
                                 address_display: element.venue.address.localized_multi_line_address_display
                             },
-                            saved: savedEventStatus,
+                            saved: false,
                         });
                     });
 
@@ -128,44 +119,18 @@ class Schedule extends React.Component {
         }
     }
 
-    addSavedEvent(eventId) {
+    toggleSavedEvent(eventId) {
         this.setState(currState => {
-            currState.savedEvents.push(eventId);
-
-            // Negate saved property of specified event
+            // Toggle saved property of specified event
             let eventIndex = currState.events.findIndex(event => event.id === eventId);
             currState.events[eventIndex].saved = !currState.events[eventIndex].saved;
 
             return {
-                savedEvents: currState.savedEvents
+                events: currState.events
             };
         });
 
-        this.updateSavedEventsStorage();
-    }
-
-    removeSavedEvent(eventId) {
-        this.setState(currState => {
-            for (let i = 0; i < currState.savedEvents.length; i++) {
-                if (currState.savedEvents[i] === eventId) {
-                    currState.savedEvents.splice(i, 1);
-                }
-            }
-
-            // Negate saved property of specified event
-            let eventIndex = currState.events.findIndex(event => event.id === eventId);
-            currState.events[eventIndex].saved = !currState.events[eventIndex].saved; //TODO: don't directly mutate state
-
-            return {
-                savedEvents: currState.savedEvents
-            };
-        });
-
-        this.updateSavedEventsStorage();
-    }
-
-    updateSavedEventsStorage() {
-        Storage.storeData('savedEvents', this.state.savedEvents);
+        Storage.storeData("events", this.state.events);
     }
 
     // TODO: is spinner enough to indicate loading?
@@ -197,8 +162,8 @@ class Schedule extends React.Component {
 
     renderEventCard(event) {
         return (
-            <EventCard event={event} navigation={this.props.navigation} addSavedEvent={this.addSavedEvent}
-                       removeSavedEvent={this.removeSavedEvent} key={event.id.toString()}/>
+            <EventCard event={event} navigation={this.props.navigation} toggleSavedEvent={this.toggleSavedEvent}
+                       key={event.id.toString()}/>
         );
     }
 

@@ -33,11 +33,7 @@ class EventCard extends React.PureComponent {
             return {saved: !currState.saved}
         });
 
-        if (this.state.saved) {
-            this.props.addSavedEvent(this.props.event.id);
-        } else {
-            this.props.removeSavedEvent(this.props.event.id);
-        }
+        this.props.toggleSavedEvent(this.props.event.id);
     }
 
     async shareEvent() {
