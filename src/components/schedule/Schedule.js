@@ -32,6 +32,8 @@ class Schedule extends React.Component {
         this.updateSavedEventsStorage = this.updateSavedEventsStorage.bind(this);
     }
 
+    lastEventId = "";
+
     //Maybe just change to title instead of full header element
     static navigationOptions = ({navigation}) => {
         return ({
@@ -47,12 +49,23 @@ class Schedule extends React.Component {
     }
 
     fetchEvents = async () => {
-        const events = [];
         this.setState({loadingEvents: true});
+        // Initialize events to current events to avoid rewriting on updates from API
+        let events = this.state.events;
+
+        // Check if initial load of component and attempt to retrieve events from storage
+        if (this.lastEventId === "") {
+            events = await Storage.retrieveData("events") || []; // || events
+
+            // Check if events exist in storage and fetch starting from lastEventId
+            if (events.length !== 0) {
+                this.lastEventId = events[events.length - 1].id;
+            }
+        }
 
         try {
-            const apiCall = await fetch("https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod");
-
+            const apiCall =
+                await fetch(`https://o83q54u9ea.execute-api.us-east-1.amazonaws.com/prod?lastId=${this.lastEventId}`);
             if (apiCall.ok) {
                 const eventData = await apiCall.json();
                 let currSavedEvents = this.state.savedEvents;
@@ -85,11 +98,22 @@ class Schedule extends React.Component {
                 }
             } else {
                 console.log('API call not ok'); //Don't log error to console. TODO: Separate logging and error display
-                this.setState({loadingEvents: false});
+                this.setState({
+                    events: events,
+                    loadingEvents: false
+                });
             }
         } catch (exception) {
             console.log('Error parsing and retrieving event data');
-            this.setState({loadingEvents: false});
+            this.setState({
+                events: events,
+                loadingEvents: false
+            });
+        }
+
+        if (events.length !== 0) {
+            this.lastEventId = events[events.length - 1].id;
+            Storage.storeData("events", events);
         }
     };
 
