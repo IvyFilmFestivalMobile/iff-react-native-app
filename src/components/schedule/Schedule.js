@@ -6,6 +6,7 @@ import Storage from "../../utils/Storage";
 import {Appbar, FAB, Text} from "react-native-paper";
 import EventFilterEnum from "./EventFilterEnum";
 import {connect} from "react-redux";
+import moment from 'moment';
 
 class Schedule extends React.Component {
 
@@ -113,7 +114,7 @@ class Schedule extends React.Component {
             case EventFilterEnum.ALL:
                 return events;
             case EventFilterEnum.UPCOMING:
-                return events.filter(event => event.end > Date.now);
+                return events.filter(event => moment().isSameOrBefore(event.end));
             case EventFilterEnum.SAVED:
                 return events.filter(event => event.saved);
         }
