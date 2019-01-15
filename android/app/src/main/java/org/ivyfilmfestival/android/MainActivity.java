@@ -1,8 +1,18 @@
 package org.ivyfilmfestival.android;
 
 import com.facebook.react.ReactActivity;
+import org.devio.rn.splashscreen.SplashScreen;
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
+
+    @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            // Hide status bar from RN splash screen as Android splash covers it as well
+            // TODO: may not be good for usability
+            SplashScreen.show(this, true); // or style with R.style.SplashScreenTheme as second arg
+            super.onCreate(savedInstanceState);
+    }
 
     /**
      * Returns the name of the main component registered from JavaScript.

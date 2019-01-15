@@ -11,7 +11,7 @@ import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom
 import FATabBarIcon from "./src/components/shared/FATabBarIcon";
 import MaterialTabBarIcon from "./src/components/shared/MaterialTabBarIcon";
 import {persistor, store} from "./src/redux/store";
-import {StatusBar} from "react-native";
+import SplashScreen from 'react-native-splash-screen';
 
 const InfoNavigator = createStackNavigator(
     {
@@ -91,16 +91,20 @@ const AppContainer = createAppContainer(AppNavigator);
 
 //TODO: Return AppLoading if PersistGate incomplete
 export default class App extends React.Component {
-  render() {
-    return (
-        <StoreProvider store={store}>
-            <PersistGate persistor={persistor}>
-                <PaperProvider>
-                    <StatusBar backgroundColor='#ee5956' barStyle='default'/>
-                    <AppContainer/>
-                </PaperProvider>
-            </PersistGate>
-        </StoreProvider>
-    );
-  }
+
+    componentDidMount() {
+        SplashScreen.hide();
+    }
+
+    render() {
+        return (
+            <StoreProvider store={store}>
+                <PersistGate persistor={persistor}>
+                    <PaperProvider>
+                        <AppContainer/>
+                    </PaperProvider>
+                </PersistGate>
+            </StoreProvider>
+        );
+    }
 }
