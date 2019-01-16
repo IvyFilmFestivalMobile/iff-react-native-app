@@ -54,6 +54,8 @@ class Schedule extends React.Component {
             // Check if events exist in storage and fetch starting from lastEventId
             if (events.length !== 0) {
                 this.lastEventId = events[events.length - 1].id;
+
+                this.setState({events: events});
             }
         }
 
