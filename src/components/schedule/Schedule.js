@@ -128,8 +128,9 @@ class Schedule extends React.Component {
             let eventIndex = currState.events.findIndex(event => event.id === eventId);
             currState.events[eventIndex].saved = !currState.events[eventIndex].saved;
 
+            // Set state to new events to trigger re-render of events list
             return {
-                events: currState.events
+                events: currState.events.slice(),
             };
         });
 
