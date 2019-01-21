@@ -139,12 +139,16 @@ class Schedule extends React.Component {
 
     // TODO: is spinner enough to indicate loading?
     listEmptyText = () => {
+        const currentFilterText = this.props.eventFilter !== EventFilterEnum.ALL
+            ? this.props.eventFilter.toLowerCase()
+            : "";
+
         return this.state.loadingEvents
             ? (<View style={styles.loadingView}>
                 <Text style={styles.loadingText}>Loading events...</Text>
             </View>)
             : (<View style={styles.loadingView}>
-                <Text style={styles.loadingText}>No events to display</Text>
+                <Text style={styles.loadingText}>No {currentFilterText} events to display</Text>
             </View>);
     };
 
