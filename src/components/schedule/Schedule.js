@@ -123,7 +123,7 @@ class Schedule extends React.Component {
                 for (let index = events.length - 1; index >= 0; index--) {
                     let event = events[index];
                     if (currentMoment.isSameOrBefore(moment(event.end))) {
-                        upcomingEvents.push(event);
+                        upcomingEvents.unshift(event);
                     } else {
                         break;
                     }
