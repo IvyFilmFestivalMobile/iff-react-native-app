@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from "moment";
 import "moment-timezone";
-import {Share, StyleSheet} from 'react-native';
+import {Share, StyleSheet, View} from 'react-native';
 import {Card, IconButton, Subheading, Title} from 'react-native-paper';
 import {connect} from 'react-redux';
 
@@ -13,19 +13,24 @@ class EventCard extends React.PureComponent {
             saved: this.props.event.saved
         };
 
-        this.getDurationStrings = this.getDurationStrings.bind(this);
+        this.getDurationSubheadings = this.getDurationSubheadings.bind(this);
         this.toggleSavedState = this.toggleSavedState.bind(this);
         this.shareEvent = this.shareEvent.bind(this);
     }
 
-    getDurationStrings(startTime, endTime) { //TODO: called twice maybe render components here to return instead
+    getDurationSubheadings(startTime, endTime) {
         const localStartTime = this.props.isEasternTime ? moment(startTime).tz("America/New_York") : moment(startTime);
         const localEndTime = this.props.isEasternTime ? moment(endTime).tz("America/New_York") : moment(endTime);
 
         const dateDurationStr = localStartTime.format("dddd, MMMM DD, YYYY");
         const timeDurationStr = localStartTime.format("LT") + " - " + localEndTime.format("LT");
 
-        return [dateDurationStr, timeDurationStr];
+        return (
+            <View>
+                <Subheading>{dateDurationStr}</Subheading>
+                <Subheading>{timeDurationStr}</Subheading>
+            </View>
+        );
     }
 
     async toggleSavedState() {
@@ -61,8 +66,7 @@ class EventCard extends React.PureComponent {
                 <Card.Cover source={{uri: this.props.event.image_url}}/>
                 <Card.Content>
                     <Title style={styles.title}>{this.props.event.name}</Title>
-                    <Subheading>{this.getDurationStrings(this.props.event.start, this.props.event.end)[0]}</Subheading>
-                    <Subheading>{this.getDurationStrings(this.props.event.start, this.props.event.end)[1]}</Subheading>
+                    {this.getDurationSubheadings(this.props.event.start, this.props.event.end)}
                 </Card.Content>
                 <Card.Actions style={styles.actions}>
                     <IconButton icon={this.state.saved ? 'bookmark' : 'bookmark-border'}
