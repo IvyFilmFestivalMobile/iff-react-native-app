@@ -116,7 +116,20 @@ class Schedule extends React.Component {
             case EventFilterEnum.ALL:
                 return events;
             case EventFilterEnum.UPCOMING:
-                return events.filter(event => moment().isSameOrBefore(event.end));
+                const currentMoment = moment();
+
+                // Since events is in chronological order, populate upcoming events starting from last event
+                let upcomingEvents = [];
+                for (let index = events.length - 1; index >= 0; index--) {
+                    let event = events[index];
+                    if (currentMoment.isSameOrBefore(moment(event.end))) {
+                        upcomingEvents.push(event);
+                    } else {
+                        break;
+                    }
+                }
+
+                return upcomingEvents;
             case EventFilterEnum.SAVED:
                 return events.filter(event => event.saved);
         }
