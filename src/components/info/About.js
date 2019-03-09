@@ -49,7 +49,7 @@ class About extends React.PureComponent {
     }
 
     openLicenses() {
-
+        Linking.openURL('https://app.fossa.com/reports/365f7086-208d-457e-bd66-1309f7eb0527');
     }
 
     render() {
