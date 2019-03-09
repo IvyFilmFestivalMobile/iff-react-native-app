@@ -1,10 +1,8 @@
 import React from 'react';
-import {Text, ScrollView, Keyboard, StyleSheet} from 'react-native';
-import {Appbar} from "react-native-paper";
-import {FILMS, MOVIE_QUERY} from '../../Constants';
+import {FlatList, StyleSheet, View} from 'react-native';
+import {Appbar, Text} from "react-native-paper";
 import FilmCard from './FilmCard';
-import { SearchBar } from 'react-native-elements';
-
+import Storage from "../../utils/Storage";
 
 class Films extends React.Component {
     constructor(props) {
@@ -12,139 +10,98 @@ class Films extends React.Component {
 
         this.state = {
             films: [],
-            query: '',
-            searching: false,
-            keyboard: false
-        };    
+            loadingFilms: false,
+        };
+
+        this.fetchFilms = this.fetchFilms.bind(this);
     }
-   
-    toggleSearch = () => {  
-        this.setState({
-            searching: !this.state.searching
-        });
-    }
-    
+
     static navigationOptions = ({navigation}) => {
-        const {params = {}} = navigation.state;
         return ({
             header: (
                 <Appbar.Header style={styles.header}>
                     <Appbar.Content title={'Films'} color={colors.header_color}/>
-                    <Appbar.Action icon={'search'} onPress= {params.handle}/> 
-                    
                 </Appbar.Header>),
         });
     };
-    
-    keyboardDidHide = () => {
-        if(this.state.searching) {
-            this.toggleSearch();
-        }        
-    };
 
-    showSearchBar = () => {
-        
-        if(this.state.searching) {
-            return (<SearchBar 
-                lightTheme
-                round
-                autoFocus= {true}
-                placeholder='Type Here...' 
-                ref={search => this.search = search}
-                onChangeText= {text => this.setState({query: text})}
-                value = {this.state.query}
-                onCancel= {this.toggleSearch}/>);
+    // TODO: bring back search and customize film cards with more description and functionality
+
+    async fetchFilms() {
+        this.setState({loadingFilms: true});
+
+        // Initialize events to current events to avoid rewriting on updates from API
+        let films = [];
+
+        try {
+            const apiCall =
+                await fetch(`https://ivyfilmfestivalmobile.github.io/iff-backend/api/festivalFilms.json`);
+            if (apiCall.ok) {
+                const filmData = await apiCall.json();
+                if (typeof filmData !== 'undefined') {
+                    filmData.films.forEach(function (element) {
+                        films.push({
+                            title: element.title,
+                            description: element.description,
+                            id: element.id,
+                            poster_url: element.poster_path,
+                            release_date: element.release_date,
+                            saved: false,
+                        });
+                    });
+                }
+            } else {
+                console.log('API call not ok'); //Don't log error to console. TODO: Separate logging and error display
+            }
+        } catch (exception) {
+            console.log('Error parsing and retrieving film data');
+        } finally {
+            this.setState({
+                films: films,
+                loadingFilms: false
+            });
+
+            if (films.length !== 0) {
+                Storage.storeData("films", films); // TODO: cache
+            }
         }
-       else {
-            return null;
-        }
-           
-        
-    } 
-   
-    getMovieId = (title) => {
-        return MOVIE_QUERY.BASE_URL + MOVIE_QUERY.SEARCH_QUERY +  title + "&" + MOVIE_QUERY.API_KEY;
-    };
-    getEndpoint = (id) => {
-        return "https://api.themoviedb.org/3/movie/" + id + "?" + MOVIE_QUERY.API_KEY;
     }
-    getCards = (films) => {
-        const cards = films.map((film, key) => {
-            return (
-                <FilmCard synopsis={film.overview} 
-                image_url= {MOVIE_QUERY.IMAGE_URL + film.poster_path}
-                film_name = {film.title}
-                release_date = {film.release_date}
-                runtime = {film.runtime}
-                genres = {film.genres.join(", ")}
-                tagline = {film.tagline}
-                key = {key}/>
-            )
-        });
-        if(cards.length > 0) {
-            return cards;
-        }
-        else {
-            // Todo: style this text
-            return <Text style= {{margin: 5}}>No result was found.</Text>;
-        }
 
-
+    listEmptyText = () => {
+        return this.state.loadingEvents
+            ? (<View style={styles.loadingView}>
+                <Text style={styles.loadingText}>Loading films...</Text>
+            </View>)
+            : (<View style={styles.loadingView}>
+                <Text style={styles.loadingText}>No films to display</Text>
+            </View>);
     };
 
-    componentDidMount() {
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-
-        Promise.all(FILMS.map(film => fetch(this.getMovieId(film))
-        .then(res => res.json())
-        .then(filmData => {
-            fetch(this.getEndpoint(filmData.results[0].id))
-                .then(res => res.json())
-                .then(data => {
-                    const genres = [];
-                    data.genres.forEach(genre => genres.push(genre.name));
-                    
-                    const extracted_data = {
-                        genres: genres,
-                        overview: data.overview,
-                        poster_path: data.poster_path,
-                        release_date: data.release_date,
-                        title: data.title,
-                        tagline: data.tagline,
-                        runtime: data.runtime + " mins"
-                    };
-
-                this.setState(prevState => ({ 
-                    films:[...prevState.films, extracted_data]    
-                }));
-            })
-    })));
-
-        this.props.navigation.setParams({
-            handle: this.toggleSearch,
-
-        });
-        
+    renderFilmCard(film) {
+        return (
+            <FilmCard film={film} navigation={this.props.navigation}
+                      key={film.id.toString()}/>
+        );
     }
-    componentWillUnmount() {
-        this.keyboardDidHideListener.remove();
+
+    async componentDidMount() {
+        await this.fetchFilms();
     }
 
     render() {
-        
-        
-        const { films, query } = this.state;
-        console.log(films);
-        const newFilms = films.filter(item => {
-            const data = item.title.toUpperCase();
-            return data.indexOf(query.toUpperCase()) > -1;
-        });
         //Todo: loading screen
         return(
-            <ScrollView>
-                {this.showSearchBar()}
-                {this.getCards(newFilms)}
-            </ScrollView>  
+            <View style={styles.rootContainer}>
+                <FlatList
+                    contentContainerStyle={styles.scrollContainer}
+                    refreshing={this.state.loadingFilms}
+                    onRefresh={this.fetchFilms}
+                    data={this.state.films}
+                    renderItem={({item}) => this.renderFilmCard(item)}
+                    keyExtractor={(film) => film.id.toString()}
+                    ListEmptyComponent={this.listEmptyText}
+                />
+            </View>
         );      
     }
 }
@@ -161,10 +118,21 @@ const styles = StyleSheet.create({
     content: {
         padding: 4,
     },
+    rootContainer: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        paddingBottom: 72,
+    },
+    loadingView: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     loadingText: {
         textAlign: 'center',
         textAlignVertical: 'center',
-    }
+    },
 });
 
 export default Films;
