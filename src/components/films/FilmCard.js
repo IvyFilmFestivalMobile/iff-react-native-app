@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Card, Text} from 'react-native-paper';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Card} from 'react-native-paper';
 
 
 class FilmCard extends React.Component {
@@ -22,7 +22,7 @@ class FilmCard extends React.Component {
         if(this.state.expanded) {
             return (
                 <View>
-                    <Text style= {{margin: 8}}>
+                    <Text style={{margin: 8, color: '#000'}}>
                         {this.props.film.description}
                     </Text>
                 </View>
@@ -39,8 +39,13 @@ class FilmCard extends React.Component {
                     <TouchableOpacity onPress= {this.toggleExpand} style= {styles.cardLayout}>
                         <Card.Cover style={styles.picture} source={{uri: this.props.film.poster_url}}/>
                         <View style={styles.filmInfo}>
-                            <View style= {{flexDirection: 'row', justifyContent: 'space-between',  marginBottom: 5}}>
-                                <Text>
+                            <View style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginBottom: 5
+                            }}>
+                                <Text style={styles.filmTitle}>
                                     {this.props.film.title}
                                 </Text>
                               
@@ -49,9 +54,14 @@ class FilmCard extends React.Component {
                                     </Text>
                              
                             </View>
-                            <View style= {{flexDirection: 'row'}}>
+                            <View style={{display: 'flex', flexDirection: 'row', flex: 1, flexWrap: 'wrap'}}>
                                 <Text style= {styles.details}>Released: </Text>
-                                <Text>{this.props.film.release_date}</Text>
+                                <Text style={styles.text}>{this.props.film.time}</Text>
+                            </View>
+
+                            <View style={{display: 'flex', flexDirection: 'row', flex: 1, flexWrap: 'wrap'}}>
+                                <Text style={styles.details}>Location: </Text>
+                                <Text style={styles.text}>{this.props.film.location}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -63,21 +73,31 @@ class FilmCard extends React.Component {
 
 const styles = StyleSheet.create({
     picture: {
-        height: 150,
-        width: 120,
+        flex: 0.5,
         margin: 8,
     },
     filmInfo: {
         flex: 1,  
         margin: 6,
+        display: 'flex',
     },
     cardLayout: {
+        display: 'flex',
         flexDirection: 'row',  
     },
     details: {
         color: '#ee5956'
-    }
+    },
 
+    filmTitle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        color: '#000',
+    },
+
+    text: {
+        color: '#000'
+    }
 });
 
 export default FilmCard;

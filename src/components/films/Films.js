@@ -46,6 +46,8 @@ class Films extends React.Component {
                             id: element.id,
                             poster_url: element.poster_path,
                             release_date: element.release_date,
+                            time: element.time,
+                            location: element.location,
                             saved: false,
                         });
                     });
