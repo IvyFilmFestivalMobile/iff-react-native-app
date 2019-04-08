@@ -50,7 +50,7 @@ class Festival extends React.PureComponent {
 
                 <View style={styles.imageViewContainer}>
                     <FullWidthImage
-                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/screenings.webp'}}
+                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/screenings.jpeg'}}
                         width={1920} height={1080} style={styles.fullWidthImage}/>
 
                     <Text style={styles.textOverlay}>
@@ -65,7 +65,7 @@ class Festival extends React.PureComponent {
 
                 <View style={styles.imageViewContainer}>
                     <FullWidthImage
-                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/speakers.webp'}}
+                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/speakers.jpeg'}}
                         width={1920} height={1080} style={styles.fullWidthImage}/>
 
                     <Text style={styles.textOverlay}>
@@ -79,7 +79,7 @@ class Festival extends React.PureComponent {
 
                 <View style={styles.imageViewContainer}>
                     <FullWidthImage
-                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/workshops.webp'}}
+                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/workshops.jpg'}}
                         width={1920} height={1280} style={styles.fullWidthImage}/>
 
                     <Text style={styles.textOverlay}>
@@ -94,7 +94,7 @@ class Festival extends React.PureComponent {
 
                 <View style={styles.imageViewContainer}>
                     <FullWidthImage
-                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/vr-arcade.webp'}}
+                        source={{uri: 'https://ivyfilmfestivalmobile.github.io/iff-backend/assets/mobile/img/vr-arcade.jpeg'}}
                         width={1920} height={1525} style={styles.fullWidthImage}/>
 
                     <Text style={styles.textOverlay}>
