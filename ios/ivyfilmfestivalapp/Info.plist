@@ -38,7 +38,13 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>The Ivy Film Festival 2019 App needs user location to provide directions to events and open embedded maps within the app.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>The Ivy Film Festival 2019 App needs locations to provide directions to events and open embedded maps within the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The Ivy Film Festival 2019 App needs locations to provide directions to events and open embedded maps within the app.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The Ivy Film Festival 2019 App needs locations to provide directions to events and open embedded maps within the app.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
